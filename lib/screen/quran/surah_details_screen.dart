@@ -148,6 +148,8 @@ class SurahDetailsScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
+
+
                             child: TranslationSwitch(
                           switchOnOff: data.showTransliteration!,
                           onTap: (va) {
