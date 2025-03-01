@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:quran_first/screen/on_boarding/on_boarding.dart';
+import 'package:quran_first/test.dart';
 
 import 'controller/quran_provider.dart';
 
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
           ),
           home: const OnBoarding(),
+          // home:  ChapterListScreen(),
         ),
       ),
     );
