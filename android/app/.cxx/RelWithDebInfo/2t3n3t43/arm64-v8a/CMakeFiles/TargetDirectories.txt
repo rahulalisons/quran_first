@@ -1,0 +1,2 @@
+C:/alions/quran_first/android/app/.cxx/RelWithDebInfo/2t3n3t43/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/alions/quran_first/android/app/.cxx/RelWithDebInfo/2t3n3t43/arm64-v8a/CMakeFiles/rebuild_cache.dir

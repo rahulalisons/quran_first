@@ -12,7 +12,7 @@ class CustomAppbar extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: AppColors.white,
-      surfaceTintColor: AppColors.transparent,
+      surfaceTintColor: AppColors.white,
       centerTitle: false,
       // titleSpacing: 16,
       title: Text(

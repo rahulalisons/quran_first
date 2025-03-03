@@ -5,8 +5,10 @@ import 'package:quran_first/screen/on_boarding/on_boarding.dart';
 import 'package:quran_first/test.dart';
 
 import 'controller/quran_provider.dart';
+import 'db_helper/db_helper.dart';
 
 void main() {
+  final DBHelper dbHelper = DBHelper();
   runApp(const MyApp());
 }
 
@@ -30,7 +32,7 @@ class MyApp extends StatelessWidget {
           ),
           home: const OnBoarding(),
 
-          // home:  ChapterListScreen(),
+
         ),
       ),
     );

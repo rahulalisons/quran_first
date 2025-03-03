@@ -7,7 +7,14 @@ import '../../../core/values/colors.dart';
 import '../../common_widgets/custom_textstyle.dart';
 
 class AyatTile extends StatelessWidget {
-  const AyatTile({super.key});
+  final Map<String, dynamic>? enAyathBysurath;
+  final Map<String, dynamic>? arAyathBysurath;
+  final Map<String, dynamic>? maAyathBysurath;
+  const AyatTile(
+      {super.key,
+      this.arAyathBysurath,
+      this.maAyathBysurath,
+      this.enAyathBysurath});
 
   @override
   Widget build(BuildContext context) {
@@ -15,64 +22,60 @@ class AyatTile extends StatelessWidget {
     bool translation = context.watch<QuranProvider>().showTranslation!;
 
     return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15), color: Colors.white),
-      width: double.infinity,
-      padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Align(
-              alignment: Alignment.topRight,
-              child:
-                  ayathText(text: 'بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ')),
-          transliteration == true
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Divider(
-                      height: 20,
-                    ),
-                    ayathText(text: 'Bismillah hir rahman nir raheem'),
-                  ],
-                )
-              : SizedBox(),
-          translation == true
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Divider(
-                      height: 20,
-                    ),
-                    ayathText(
-                        text:
-                            'In the Name of Allah, Most Gracious,Most Merciful.'),
-                  ],
-                )
-              : SizedBox(),
-          Divider(
-            height: 20,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '1',
-                style: CustomFontStyle().common(
-                  color: AppColors.textBlack.withOpacity(.25),
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15), color: Colors.white),
+        width: double.infinity,
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+                alignment: Alignment.topRight,
+                child: ayathText(text: '${arAyathBysurath!['ayath']}')),
+            transliteration == true
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Divider(
+                        height: 20,
+                      ),
+                      ayathText(text: 'Bismillah hir rahman nir raheem'),
+                    ],
+                  )
+                : SizedBox(),
+            translation == true
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Divider(
+                        height: 20,
+                      ),
+                      ayathText(text: '${enAyathBysurath!['ayath']}'),
+                    ],
+                  )
+                : SizedBox(),
+            Divider(
+              height: 20,
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${arAyathBysurath!['ayath_no']}',
+                  style: CustomFontStyle().common(
+                    color: AppColors.textBlack.withOpacity(.25),
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              Spacer(),
-              buttonIcon(),
-              buttonIcon(icons: Icon(Icons.bookmark)),
-              buttonIcon(icons: Icon(Icons.share)),
-            ],
-          )
-        ],
-      ),
-    );
+                Spacer(),
+                buttonIcon(),
+                buttonIcon(icons: Icon(Icons.bookmark)),
+                buttonIcon(icons: Icon(Icons.share)),
+              ],
+            )
+          ],
+        ));
   }
 }
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:quran_first/controller/quran_provider.dart';
 import 'package:quran_first/core/values/colors.dart';
@@ -12,16 +11,20 @@ import 'package:quran_first/screen/quran/widgets/translation_switch.dart';
 import '../common_widgets/custom_textstyle.dart';
 
 class SurahDetailsScreen extends StatelessWidget {
-  const SurahDetailsScreen({super.key});
+  final Map<String, dynamic>? verses;
+  final Map<String, dynamic>? enSurah;
+  final Map<String, dynamic>? arSurah;
+  const SurahDetailsScreen(
+      {super.key, this.verses, this.enSurah, this.arSurah});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.lightGray,
-      bottomNavigationBar: Container(
-        height: 200.h,
-        color: Colors.red,
-      ),
+      // bottomNavigationBar: Container(
+      //   height: 200.h,
+      //   color: Colors.red,
+      // ),
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: AppColors.white,
@@ -31,7 +34,7 @@ class SurahDetailsScreen extends StatelessWidget {
               .min, // Important to prevent the column from taking full height
           children: [
             Text(
-              '1. Al-Fatihah',
+              '${enSurah?['surath_no']}. ${enSurah!['surath_name']}',
               style: CustomFontStyle().common(
                   fontWeight: FontWeight.w600,
                   fontSize: 18.sp,
@@ -82,7 +85,7 @@ class SurahDetailsScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'الافتتاح',
+                              '${arSurah!['surath_name']}',
                               maxLines: 1,
                               style: CustomFontStyle().common(
                                 color: AppColors.black,
@@ -94,7 +97,7 @@ class SurahDetailsScreen extends StatelessWidget {
                               height: 5,
                             ),
                             Text(
-                              '7 Verses',
+                              '${verses!['ayah_count']} Verses',
                               style: CustomFontStyle().common(
                                 color: AppColors.textBlack,
                                 fontSize: 12.sp,
@@ -189,16 +192,23 @@ class SurahDetailsScreen extends StatelessWidget {
           //   ],
           // ),
           Expanded(
-            child: ListView.separated(
-                padding: EdgeInsets.all(16),
-                itemBuilder: (context, index) {
-                  print('sefrads');
-                  return AyatTile();
-                },
-                separatorBuilder: (context, index) => SizedBox(
-                      height: 10,
-                    ),
-                itemCount: 10),
+            child: Consumer<QuranProvider>(builder: (context, data, _) {
+              return ListView.separated(
+                  padding: EdgeInsets.all(16),
+                  itemBuilder: (context, index) {
+                    print('sefrads');
+                    return AyatTile(
+                      arAyathBysurath: data.arAyathBysurath![index],
+                      enAyathBysurath: data.enAyathBysurath![index],
+                      maAyathBysurath: data.maAyathBysurath![index],
+
+                    );
+                  },
+                  separatorBuilder: (context, index) => SizedBox(
+                        height: 10,
+                      ),
+                  itemCount: data.arAyathBysurath?.length ?? 0);
+            }),
           )
         ],
       ),

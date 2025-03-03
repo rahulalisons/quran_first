@@ -13,8 +13,20 @@ import '../../core/values/colors.dart';
 import '../common_widgets/custom_appbar.dart';
 import '../common_widgets/custom_textfield.dart';
 
-class QuranScreen extends StatelessWidget {
+class QuranScreen extends StatefulWidget {
   const QuranScreen({super.key});
+
+  @override
+  State<QuranScreen> createState() => _QuranScreenState();
+}
+
+class _QuranScreenState extends State<QuranScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    Provider.of<QuranProvider>(context, listen: false).fetchChapters();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,10 +60,15 @@ class QuranScreen extends StatelessWidget {
                   selectIndex: data.juzOrSurah,
                   onTap: (va) {
                     data.switchIndex(va);
+                    if (va == 1) {
+                      data.fetchJuz();
+                    }
                   },
                   names: ['Surah', 'Juz']);
             }),
-           SizedBox(height: 5,),
+            SizedBox(
+              height: 5,
+            ),
             Consumer<QuranProvider>(builder: (context, data, _) {
               return Expanded(
                   child: Visibility(

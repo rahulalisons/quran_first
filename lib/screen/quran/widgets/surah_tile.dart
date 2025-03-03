@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:quran_first/controller/quran_provider.dart';
 
 import '../../../core/values/colors.dart';
 import '../../../core/values/strings.dart';
@@ -7,18 +9,27 @@ import '../../common_widgets/custom_textstyle.dart';
 import '../surah_details_screen.dart';
 
 class SurahTile extends StatelessWidget {
-  final String? count;
+  final Map<String, dynamic>? enSurah;
+  final Map<String, dynamic>? arSurah;
   final bool? isJuz;
-  const SurahTile({super.key, this.count, this.isJuz = false});
+  final Map<String, dynamic>? verses;
+  const SurahTile(
+      {super.key, this.isJuz = false, this.enSurah, this.arSurah, this.verses});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        print(enSurah?['surath_no']);
+        context.read<QuranProvider>().ayathBySurath(enSurah?['surath_no']);
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SurahDetailsScreen(),
+              builder: (context) => SurahDetailsScreen(
+                verses: verses,
+                enSurah: enSurah,
+                arSurah: arSurah,
+              ),
             ));
       },
       child: Container(
@@ -38,7 +49,7 @@ class SurahTile extends StatelessWidget {
                   fit: BoxFit.cover, // optional
                 ),
                 Text(
-                  count ?? '',
+                  enSurah?['surath_no'].toString() ?? "",
                   style: CustomFontStyle().common(
                     color: AppColors.white,
                     fontSize: 16.sp,
@@ -55,7 +66,7 @@ class SurahTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Al-Fatihah',
+                    enSurah?['surath_name'] ?? '',
                     maxLines: 1,
                     style: CustomFontStyle().common(
                       color: AppColors.black,
@@ -69,7 +80,7 @@ class SurahTile extends StatelessWidget {
                   isJuz == true
                       ? SizedBox()
                       : Text(
-                          '7 Verses',
+                          '${verses!['ayah_count']} Verses',
                           style: CustomFontStyle().common(
                             color: AppColors.textBlack,
                             fontSize: 12.sp,
@@ -89,7 +100,7 @@ class SurahTile extends StatelessWidget {
                     ),
                   )
                 : Text(
-                    'الافتتاح',
+                    arSurah!['surath_name'],
                     style: CustomFontStyle().common(
                       color: AppColors.black,
                       fontSize: 18.sp,

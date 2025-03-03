@@ -1,8 +1,11 @@
+import 'dart:developer';
 import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../db_helper/db_helper.dart';
+import '../models/JuzSurahItem.dart';
 import '../screen/home/home.dart';
 import '../screen/quran/quran_screen.dart';
 
@@ -48,6 +51,55 @@ class QuranProvider with ChangeNotifier {
     } else {
       showTranslation = value;
     }
+    notifyListeners();
+  }
+
+  final DBHelper dbHelper = DBHelper();
+  List<Map<String, dynamic>>? arData;
+  List<Map<String, dynamic>>? enData;
+  List<Map<String, dynamic>>? maData;
+  List<Map<String, dynamic>>? arAyah;
+  List<Map<String, dynamic>>? maAyah;
+  List<Map<String, dynamic>>? enAyah;
+  List<Map<String, dynamic>>? count;
+  Future fetchChapters() async {
+    arData = await dbHelper.getAllEnSurah(code: 'ar');
+    maData = await dbHelper.getAllEnSurah(code: 'ma');
+    enData = await dbHelper.getAllEnSurah(code: 'en');
+    // arAyah = await dbHelper.getAllAyath(code: 'ar');
+    // enAyah = await dbHelper.getAllAyath(code: 'en');
+    // maAyah = await dbHelper.getAllAyath(code: 'ma');
+    count = await dbHelper.getSurahAyahCounts(code: 'en');
+    notifyListeners();
+  }
+
+  List<Map<String, dynamic>>? juz;
+
+  Future<List<Map<String, dynamic>>?>? fetchJuz() async {
+    juz = await dbHelper.getAllJuz();
+    notifyListeners();
+  }
+
+  List<JuzSurahItem>? juzSurahList = [];
+
+  Future<List<JuzSurahItem>?> fetchJuzSurahData() async {
+    return await dbHelper.fetchJuzSurahData();
+  }
+
+  List<Map<String, dynamic>>? enAyathBysurath;
+  List<Map<String, dynamic>>? arAyathBysurath;
+  List<Map<String, dynamic>>? maAyathBysurath;
+
+  Future<List<Map<String, dynamic>>?>? ayathBySurath(int surahNo) async {
+    enAyathBysurath =
+        await dbHelper.getAyathsBySurah(code: 'en', surahNo: surahNo);
+    maAyathBysurath =
+        await dbHelper.getAyathsBySurah(code: 'ma', surahNo: surahNo);
+    arAyathBysurath =
+        await dbHelper.getAyathsBySurah(code: 'ar', surahNo: surahNo);
+    log('----$enAyathBysurath');
+    log('----$maAyathBysurath');
+    log('----$arAyathBysurath');
     notifyListeners();
   }
 }
