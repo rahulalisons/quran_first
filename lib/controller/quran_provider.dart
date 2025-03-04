@@ -80,25 +80,25 @@ class QuranProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  List<JuzSurahItem>? juzSurahList = [];
+  List<JuzhData>? juzhDataList;
 
-  Future<List<JuzSurahItem>?> fetchJuzSurahData() async {
-    return await dbHelper.fetchJuzSurahData();
+  Future fetchJuzSurahData() async {
+    juzhDataList = await dbHelper.fetchJuzhData();
+    notifyListeners();
   }
 
-  List<Map<String, dynamic>>? enAyathBysurath;
+  List<Map<String, dynamic>>? AyathBysurath;
   List<Map<String, dynamic>>? arAyathBysurath;
-  List<Map<String, dynamic>>? maAyathBysurath;
 
-  Future<List<Map<String, dynamic>>?>? ayathBySurath(int surahNo) async {
-    enAyathBysurath =
-        await dbHelper.getAyathsBySurah(code: 'en', surahNo: surahNo);
-    maAyathBysurath =
-        await dbHelper.getAyathsBySurah(code: 'ma', surahNo: surahNo);
+  Future<List<Map<String, dynamic>>?>? ayathBySurath({
+    int? surahNo,
+    String? code,
+  }) async {
+    AyathBysurath =
+        await dbHelper.getAyathsBySurah(code: code ?? 'en', surahNo: surahNo);
     arAyathBysurath =
         await dbHelper.getAyathsBySurah(code: 'ar', surahNo: surahNo);
-    log('----$enAyathBysurath');
-    log('----$maAyathBysurath');
+    log('----$AyathBysurath');
     log('----$arAyathBysurath');
     notifyListeners();
   }

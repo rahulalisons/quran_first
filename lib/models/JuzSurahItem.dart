@@ -1,21 +1,15 @@
-// Models
-class JuzSurahItem {
-  final int juzNumber;
-  final List<SurahInfo> surahs;
+class JuzhData {
+  final int juzhNo;
+  final List<SurahData> surahs;
 
-  JuzSurahItem({required this.juzNumber, required this.surahs});
+  JuzhData({required this.juzhNo, required this.surahs});
 }
 
-class SurahInfo {
-  final int surahNumber;
+class SurahData {
   final String surahName;
-  final int startVerse;
-  final int endVerse;
+  final int startAyah;
+  final int endAyah;
+  final int verseCount;
 
-  SurahInfo({
-    required this.surahNumber,
-    required this.surahName,
-    required this.startVerse,
-    required this.endVerse,
-  });
+  SurahData({required this.surahName, required this.startAyah, required this.endAyah, required this.verseCount});
 }

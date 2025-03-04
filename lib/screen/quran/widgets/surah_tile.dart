@@ -21,7 +21,7 @@ class SurahTile extends StatelessWidget {
     return InkWell(
       onTap: () {
         print(enSurah?['surath_no']);
-        context.read<QuranProvider>().ayathBySurath(enSurah?['surath_no']);
+        context.read<QuranProvider>().ayathBySurath(surahNo: enSurah?['surath_no']);
         Navigator.push(
             context,
             MaterialPageRoute(

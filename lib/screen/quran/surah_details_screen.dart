@@ -134,12 +134,17 @@ class SurahDetailsScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Text(
-                      'English',
-                      style: CustomFontStyle().common(
-                        color: AppColors.textBlack,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
+                    InkWell(
+                      onTap: (){
+                        context.read<QuranProvider>().ayathBySurath(surahNo: enSurah?['surath_no'],code: 'ma');
+                      },
+                      child: Text(
+                        'English',
+                        style: CustomFontStyle().common(
+                          color: AppColors.textBlack,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
@@ -196,11 +201,9 @@ class SurahDetailsScreen extends StatelessWidget {
               return ListView.separated(
                   padding: EdgeInsets.all(16),
                   itemBuilder: (context, index) {
-                    print('sefrads');
                     return AyatTile(
                       arAyathBysurath: data.arAyathBysurath![index],
-                      enAyathBysurath: data.enAyathBysurath![index],
-                      maAyathBysurath: data.maAyathBysurath![index],
+                      index: index,
 
                     );
                   },

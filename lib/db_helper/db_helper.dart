@@ -58,51 +58,6 @@ class DBHelper {
     return await db.query('juzh');
   }
 
-  Future<List<JuzSurahItem>?> fetchJuzSurahData() async {
-    final db = await database;
-    final List<Map<String, dynamic>> result = await db.rawQuery('''
- SELECT 
-    j.juzh_no,
-    j.surath_no,
-    s.surah_name,  -- fetch from a separate table if necessary
-    MIN(j.ayath_no) AS start_verse,
-    MAX(j.ayath_no) AS end_verse
-FROM 
-    juzh j
-JOIN 
-    surah_table s  -- join with a separate surah table for names
-ON 
-    j.surath_no = s.surath_no
-GROUP BY 
-    j.juzh_no, j.surath_no, s.surah_name
-ORDER BY 
-    j.juzh_no, j.surath_no, start_verse;
-    ''');
-
-    // Process data into grouped format (Group by Juz number)
-    Map<int, List<SurahInfo>> groupedData = {};
-
-    for (var row in result) {
-      int juzNumber = row['juzh_no'];
-      final surah = SurahInfo(
-        surahNumber: row['surath_no'],
-        surahName: row['surath_name'],
-        startVerse: row['start_verse'],
-        endVerse: row['end_verse'],
-      );
-
-      if (!groupedData.containsKey(juzNumber)) {
-        groupedData[juzNumber] = [];
-      }
-      groupedData[juzNumber]!.add(surah);
-    }
-
-    List<JuzSurahItem> tempList = groupedData.entries.map((entry) {
-      return JuzSurahItem(juzNumber: entry.key, surahs: entry.value);
-    }).toList();
-
-    return tempList;
-  }
 
 
 
@@ -114,4 +69,57 @@ ORDER BY
       whereArgs: [surahNo],
     );
   }
+
+  Future<List<JuzhData>> fetchJuzhData() async {
+    final db = await database;
+    final result = await db.rawQuery('''
+    WITH AyahRanks AS (
+        SELECT
+            j.juzh_no,
+            j.surath_no,
+            j.ayath_no,
+            ROW_NUMBER() OVER (PARTITION BY j.surath_no ORDER BY j.ayath_no) AS ayah_rank
+        FROM
+            juzh j
+    )
+    SELECT
+        ar.juzh_no,
+        ar.surath_no,
+        s.surath_name,
+        MIN(ar.ayah_rank) AS start_ayah,
+        MAX(ar.ayah_rank) AS end_ayah,
+        COUNT(*) AS verse_count
+    FROM
+        AyahRanks ar
+    JOIN
+        en_surath s ON ar.surath_no = s.surath_no
+    GROUP BY
+        ar.juzh_no, ar.surath_no
+    ORDER BY
+        ar.juzh_no, ar.surath_no;
+  ''');
+
+    Map<int, List<SurahData>> juzhMap = {};
+
+    for (final row in result) {
+      final juzhNo = row['juzh_no'] as int;
+      final surahData = SurahData(
+        surahName: row['surath_name'] as String,
+        startAyah: row['start_ayah'] as int,
+        endAyah: row['end_ayah'] as int,
+        verseCount: row['verse_count'] as int,
+      );
+
+      juzhMap.putIfAbsent(juzhNo, () => []);
+      juzhMap[juzhNo]!.add(surahData);
+    }
+
+    return juzhMap.entries.map((entry) {
+      return JuzhData(juzhNo: entry.key, surahs: entry.value);
+    }).toList();
+  }
+
+
+
+
 }

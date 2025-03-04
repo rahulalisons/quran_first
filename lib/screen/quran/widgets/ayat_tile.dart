@@ -7,14 +7,13 @@ import '../../../core/values/colors.dart';
 import '../../common_widgets/custom_textstyle.dart';
 
 class AyatTile extends StatelessWidget {
-  final Map<String, dynamic>? enAyathBysurath;
   final Map<String, dynamic>? arAyathBysurath;
-  final Map<String, dynamic>? maAyathBysurath;
-  const AyatTile(
-      {super.key,
-      this.arAyathBysurath,
-      this.maAyathBysurath,
-      this.enAyathBysurath});
+  final int? index;
+  const AyatTile({
+    super.key,
+    this.arAyathBysurath,
+    this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +49,10 @@ class AyatTile extends StatelessWidget {
                       Divider(
                         height: 20,
                       ),
-                      ayathText(text: '${enAyathBysurath!['ayath']}'),
+                      Consumer<QuranProvider>(builder: (context, ayath, _) {
+                        return ayathText(
+                            text: '${ayath.AyathBysurath?[index!]['ayath']}');
+                      }),
                     ],
                   )
                 : SizedBox(),
