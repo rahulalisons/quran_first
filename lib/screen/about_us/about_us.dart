@@ -27,6 +27,7 @@ class AboutUs extends StatelessWidget {
           child: Column(
             children: [
               Container(
+                
                 constraints: BoxConstraints(
                     maxHeight: 210.h, minWidth: ScreenUtil().screenWidth),
                 decoration: BoxDecoration(
