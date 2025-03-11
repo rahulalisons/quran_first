@@ -34,8 +34,10 @@ class OnBoardingText extends StatelessWidget {
                 color: AppColors.white,
                 fontWeight: FontWeight.w700,
                 fontSize: 20.sp,
-                height: 2),
+              ),
+
           ),
+          SizedBox(height: 10.h,),
           Text(
             subtitle ??
                 'Immerse yourself in the timeless wisdom of the Quran. Read, reflect, and grow spiritually with ease.',

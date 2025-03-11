@@ -14,9 +14,12 @@ import '../common_widgets/custom_textstyle.dart';
 
 class OnBoarding extends StatelessWidget {
   const OnBoarding({super.key});
-
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<QuranProvider>(context, listen: false)
+          .currentLocation(context);
+    });
     return Scaffold(
       body: Container(
         height: ScreenUtil().screenHeight,
@@ -33,7 +36,6 @@ class OnBoarding extends StatelessWidget {
             print('rebuild-----888');
             return Column(
               children: [
-                /// Top 'Quranfirst' Text
                 Padding(
                   padding: EdgeInsets.only(top: ScreenUtil().statusBarHeight),
                   child: Text(
@@ -84,7 +86,6 @@ class OnBoarding extends StatelessWidget {
                 ),
                 Spacer(),
 
-                /// Dots Indicator
                 dashboard.currentIndex == 2
                     ? Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -94,8 +95,7 @@ class OnBoarding extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => BottomBarSection()),
-                              (Route<dynamic> route) =>
-                                  false, // This removes all previous routes
+                              (Route<dynamic> route) => false,
                             );
                           },
                           bgColor: Color(0XFF336846),

@@ -15,8 +15,15 @@ class ImageStrings {
   static const String home = '${AppConstants.imagePath}home.png';
   static const String prayer = '${AppConstants.imagePath}prayer.png';
   static const String quran = '${AppConstants.imagePath}quran.png';
+  static const String more = '${AppConstants.imagePath}more.png';
   static const String settings = '${AppConstants.imagePath}settings.png';
   static const String juzCount = '${AppConstants.imagePath}juz_count.png';
+  static const String aboutUs = '${AppConstants.imagePath}about_us.png';
+  static const String appVersion = '${AppConstants.imagePath}app_version.png';
+  static const String contactUs = '${AppConstants.imagePath}contact_us.png';
+  static const String rateApp = '${AppConstants.imagePath}rate_app.png';
+  static const String shareApp = '${AppConstants.imagePath}share_app.png';
+  static const String alisonLogo = '${AppConstants.imagePath}alison_logo.png';
 }
 
 class AppStrings {

@@ -6,7 +6,8 @@ import 'custom_textstyle.dart';
 
 class CustomAppbar extends StatelessWidget {
   final String? title;
-  const CustomAppbar({super.key, this.title});
+  final List<Widget>? actions;
+  const CustomAppbar({super.key, this.title, this.actions});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,7 @@ class CustomAppbar extends StatelessWidget {
             fontSize: 18.sp,
             color: AppColors.black),
       ),
-      actions: [
+      actions:actions?? [
         CircleAvatar(
           backgroundColor: AppColors.secondaryGreen,
           child: Center(
