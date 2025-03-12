@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,7 @@ import 'package:timer_builder/timer_builder.dart';
 import '../../core/values/colors.dart';
 import '../../core/values/strings.dart';
 import '../common_widgets/custom_textstyle.dart';
+import '../find_qibla/find_qibla.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -80,23 +82,25 @@ class HomeScreen extends StatelessWidget {
                       SizedBox(
                         height: 20.h,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.location_on_outlined,
-                            color: AppColors.white,
-                          ),
-                          Text(
-                            '${ctrl.currentLocations!.first.subAdministrativeArea == '' ? ctrl.currentLocations!.first.locality : ctrl.currentLocations!.first.subAdministrativeArea}, ${ctrl.currentLocations!.first.administrativeArea}',
-                            style: CustomFontStyle().common(
-                              color: AppColors.white,
-                              fontSize: size.width * 0.04,
-                              fontWeight: FontWeight.w600,
+                      ctrl.currentLocations?.first.administrativeArea == null
+                          ? SizedBox()
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.location_on_outlined,
+                                  color: AppColors.white,
+                                ),
+                                Text(
+                                  '${ctrl.currentLocations?.first.subAdministrativeArea == '' ? ctrl.currentLocations?.first.locality : ctrl.currentLocations?.first.subAdministrativeArea}, ${ctrl.currentLocations?.first.administrativeArea}',
+                                  style: CustomFontStyle().common(
+                                    color: AppColors.white,
+                                    fontSize: size.width * 0.04,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
                       SizedBox(
                         height: 20.h,
                       ),
@@ -222,7 +226,13 @@ class HomeScreen extends StatelessWidget {
                       child: Row(
                         children: [
                           buildGridItem(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => FindQibla(),
+                                    ));
+                              },
                               icon: 'assets/app/images/home_qibla.png',
                               title: 'Find Qibla'),
                           SizedBox(

@@ -57,23 +57,25 @@ class QuranProvider with ChangeNotifier {
   }
 
   List<Placemark>? currentLocations;
+  LocationPermission? permission;
   Future currentLocation(BuildContext context) async {
     bool serviceEnabled;
-    LocationPermission permission;
+    // LocationPermission permission;
 
     // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      cancelOrder(
-        canEdit: false,
-        title:
-            'Location services are disabled...?\n Please turn on location services to continue. ',
-        context: context,
-      );
+      // cancelOrder(
+      //   canEdit: false,
+      //   title:
+      //       'Location services are disabled...?\n Please turn on location services to continue. ',
+      //   context: context,
+      // );
       return Future.error('Location services are disabled.');
     }
 
     permission = await Geolocator.checkPermission();
+    notifyListeners();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
@@ -86,6 +88,7 @@ class QuranProvider with ChangeNotifier {
         // your App should show an explanatory UI now.
         return Future.error('Location permissions are denied');
       }
+      notifyListeners();
     }
 
     if (permission == LocationPermission.deniedForever) {
@@ -98,17 +101,25 @@ class QuranProvider with ChangeNotifier {
             'Please enable the location service in your device settings to use this feature...?',
         context: context,
       );
-
+      notifyListeners();
       return Future.error(
           'Location permissions are permanently denied, we cannot request permissions.');
     }
     Position? position;
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    currentLocations =
-        await placemarkFromCoordinates(position.latitude, position.longitude);
 
+    fetchCurrentLocation(
+        latitude: position.latitude, longitude: position.longitude);
     print('location values are--${currentLocations!.first}');
+    notifyListeners();
+  }
+
+  fetchCurrentLocation({
+    double? latitude,
+    double? longitude,
+  }) async {
+    currentLocations = await placemarkFromCoordinates(latitude!, longitude!);
     notifyListeners();
   }
 }
