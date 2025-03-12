@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:quran_first/screen/on_boarding/on_boarding.dart';
 
+import 'controller/db_provider.dart';
 import 'controller/quran_provider.dart';
 
 void main() {
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider<QuranProvider>(create: (_) => QuranProvider()),
+          ChangeNotifierProvider<DbProvider>(create: (_) => DbProvider()),
         ],
         child: MaterialApp(
           title: 'Flutter Demo',

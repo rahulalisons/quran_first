@@ -111,7 +111,7 @@ class QuranProvider with ChangeNotifier {
 
     fetchCurrentLocation(
         latitude: position.latitude, longitude: position.longitude);
-    print('location values are--${currentLocations!.first}');
+    print('location values are--${currentLocations?.first}');
     notifyListeners();
   }
 

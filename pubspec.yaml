@@ -49,6 +49,8 @@ dependencies:
   dotted_border: ^2.1.0
   permission_handler: ^11.4.0
   location: ^8.0.0
+  sqflite: ^2.3.0
+  path_provider: 
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +81,8 @@ flutter:
     - assets/app/images/
     - assets/app/svg/
     - assets/app/icons/
+    - assets/app/db/
+    - assets/app/db/quran_db.sqlite
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:quran_first/controller/quran_provider.dart';
-import 'package:quran_first/screen/common_widgets/custom_textfield.dart';
+import 'package:quran_first/screen/home/widgets/reandom_ayath.dart';
 import 'package:timer_builder/timer_builder.dart';
-
+import '../../controller/db_provider.dart';
 import '../../core/values/colors.dart';
 import '../../core/values/strings.dart';
 import '../common_widgets/custom_textstyle.dart';
@@ -16,11 +15,11 @@ import '../find_qibla/find_qibla.dart';
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     var ctrl = Provider.of<QuranProvider>(context);
     var size = MediaQuery.of(context).size;
     HijriCalendar.setLocal('en');
     var today = HijriCalendar.now();
-
     String formattedDate =
         "${today.hDay} ${today.longMonthName}, ${today.hYear} AH";
     return Scaffold(
@@ -128,63 +127,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   Positioned(
                     top: size.height / 4.1,
-                    child: Container(
-                      height: 180.h,
-                      width: 330.w,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          image: DecorationImage(
-                            image: AssetImage(
-                              'assets/app/images/home_screen_surah.png',
-                            ),
-                            fit: BoxFit.fill,
-                          )),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SizedBox(
-                            width: 250.w,
-                            child: Column(
-                              children: [
-                                Text(
-                                  '(الله) الرحمن! إنه هو الذي علم القرآن',
-                                  textAlign: TextAlign.center,
-                                  style: CustomFontStyle().common(
-                                    color: AppColors.white,
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10.h,
-                                ),
-                                Text(
-                                  '(Allah) Most Gracious! It is He Who has taught the Quran',
-                                  textAlign: TextAlign.center,
-                                  style: CustomFontStyle().common(
-                                    color: AppColors.white,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10.h,
-                                ),
-                                Text(
-                                  'Surah Ar Rahman 1 - 2',
-                                  style: CustomFontStyle().common(
-                                    color: AppColors.white,
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: ReandomAyath()
                   ),
                 ],
               ),
@@ -239,7 +182,10 @@ class HomeScreen extends StatelessWidget {
                             width: 20.w,
                           ),
                           buildGridItem(
-                              onTap: () {},
+                              onTap: () {
+                                // context.read<DbProvider>().fetchRandomAyath();
+                                context.read<DbProvider>().fetchAllSurath();
+                              },
                               title: 'Bookmarks',
                               icon: 'assets/app/images/home_bookmark.png')
                         ],

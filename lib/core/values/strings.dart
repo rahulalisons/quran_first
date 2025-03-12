@@ -24,6 +24,7 @@ class ImageStrings {
   static const String rateApp = '${AppConstants.imagePath}rate_app.png';
   static const String shareApp = '${AppConstants.imagePath}share_app.png';
   static const String alisonLogo = '${AppConstants.imagePath}alison_logo.png';
+  static const String locationOff = '${AppConstants.imagePath}location_off.png';
 }
 
 class AppStrings {

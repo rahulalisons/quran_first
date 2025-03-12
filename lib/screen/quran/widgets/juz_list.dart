@@ -32,7 +32,7 @@ class JuzList extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return SurahTile(
                       isJuz: true,
-                      count: '${index + 1}',
+
                     );
                   },
                   separatorBuilder: (context, index) => SizedBox(

@@ -7,7 +7,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:quran_first/controller/quran_provider.dart';
+import 'package:quran_first/screen/common_widgets/custom_button.dart';
 import '../../core/values/colors.dart';
+import '../../core/values/strings.dart';
 import '../common_widgets/custom_textstyle.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:location/location.dart' as loc;
@@ -96,6 +98,15 @@ class _FindQiblaState extends State<FindQibla> {
       backgroundColor: AppColors.primary,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(
+            Icons.arrow_back,
+            color: AppColors.white,
+          ),
+        ),
         title: Text(
           'Find Qibla',
           style: CustomFontStyle().common(
@@ -124,32 +135,47 @@ class _FindQiblaState extends State<FindQibla> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Image.asset(
+                        ImageStrings.locationOff,
+                        width: 155.w,
+                        height: 155.w,
+                      ),
+                      SizedBox(
+                        height: 20.h,
+                      ),
                       Text(
-                        snapshot.error.toString(),
-                        style: TextStyle(color: Colors.white),
+                        'Turn on phone location to get accurate Qibla directions.',
                         textAlign: TextAlign.center,
+                        style: CustomFontStyle().common(
+                          color: AppColors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20.sp,
+                        ),
                       ),
-                      SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () async {
-                          loc.Location locationR = loc.Location();
-
-                          if (!await locationR.serviceEnabled()) {
-                            bool serviceEnabled =
-                                await locationR.requestService();
-                            if (!serviceEnabled) {
-                              return; // Exit if the user denies enabling location
+                      SizedBox(height: 20.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 60.0.w),
+                        child: CustomButton(
+                          bgColor: AppColors.orange,
+                          borderColor: AppColors.orange,
+                          text: 'Enable Location',
+                          onPress: () async {
+                            loc.Location locationR = loc.Location();
+                            if (!await locationR.serviceEnabled()) {
+                              bool serviceEnabled =
+                                  await locationR.requestService();
+                              if (!serviceEnabled) {
+                                return; // Exit if the user denies enabling location
+                              }
                             }
-                          }
 
-                          // Assign the Future to getPosition inside setState
-                          setState(() {
-                            getPosition =
-                                _determinePosition(); // This remains a Future
-                          });
-                        },
-                        child: Text('Retry'),
-                      ),
+                            setState(() {
+                              getPosition =
+                                  _determinePosition(); // This remains a Future
+                            });
+                          },
+                        ),
+                      )
                     ],
                   ),
                 );

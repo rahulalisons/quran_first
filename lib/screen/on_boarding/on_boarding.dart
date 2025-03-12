@@ -6,14 +6,29 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:quran_first/core/values/colors.dart';
 import 'package:quran_first/screen/on_boarding/widgets/on_boarding_text.dart';
+import '../../controller/db_provider.dart';
 import '../../controller/quran_provider.dart';
 import '../../core/values/strings.dart';
 import '../bottom_bar/bottom_bar_section.dart';
 import '../common_widgets/custom_button.dart';
 import '../common_widgets/custom_textstyle.dart';
 
-class OnBoarding extends StatelessWidget {
+class OnBoarding extends StatefulWidget {
   const OnBoarding({super.key});
+
+  @override
+  State<OnBoarding> createState() => _OnBoardingState();
+}
+
+class _OnBoardingState extends State<OnBoarding> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<DbProvider>().fetchRandomAyath();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {

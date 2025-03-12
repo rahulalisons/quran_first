@@ -7,9 +7,9 @@ import '../../common_widgets/custom_textstyle.dart';
 import '../surah_details_screen.dart';
 
 class SurahTile extends StatelessWidget {
-  final String? count;
+  final surah;
   final bool? isJuz;
-  const SurahTile({super.key, this.count, this.isJuz = false});
+  const SurahTile({super.key, this.isJuz = false, this.surah});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class SurahTile extends StatelessWidget {
                   fit: BoxFit.cover, // optional
                 ),
                 Text(
-                  count ?? '',
+                  surah['surath_no'].toString(),
                   style: CustomFontStyle().common(
                     color: AppColors.white,
                     fontSize: 16.sp,
@@ -55,7 +55,7 @@ class SurahTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Al-Fatihah',
+                    '${surah['en_surath_name']}',
                     maxLines: 1,
                     style: CustomFontStyle().common(
                       color: AppColors.black,
@@ -69,7 +69,7 @@ class SurahTile extends StatelessWidget {
                   isJuz == true
                       ? SizedBox()
                       : Text(
-                          '7 Verses',
+                          '${surah['ayath_count']} Verses',
                           style: CustomFontStyle().common(
                             color: AppColors.textBlack,
                             fontSize: 12.sp,
@@ -89,7 +89,7 @@ class SurahTile extends StatelessWidget {
                     ),
                   )
                 : Text(
-                    'الافتتاح',
+                    '${surah['ar_surath_name']}',
                     style: CustomFontStyle().common(
                       color: AppColors.black,
                       fontSize: 18.sp,

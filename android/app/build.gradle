@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.quran_first"
-    compileSdk = 34
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
