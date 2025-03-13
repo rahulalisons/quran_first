@@ -9,40 +9,50 @@ import 'package:quran_first/screen/common_widgets/custom_button.dart';
 import 'package:quran_first/screen/quran/widgets/ayat_tile.dart';
 import 'package:quran_first/screen/quran/widgets/translation_switch.dart';
 
+import '../../controller/db_provider.dart';
 import '../common_widgets/custom_textstyle.dart';
 
-class SurahDetailsScreen extends StatelessWidget {
-  const SurahDetailsScreen({super.key});
+class SurahDetailsScreen extends StatefulWidget {
+  final int? surathId;
+  final surah;
+  const SurahDetailsScreen({super.key, this.surathId, this.surah});
+
+  @override
+  State<SurahDetailsScreen> createState() => _SurahDetailsScreenState();
+}
+
+class _SurahDetailsScreenState extends State<SurahDetailsScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    context.read<DbProvider>().getSurahDetail(widget.surathId!, key: 'english');
+    context.read<DbProvider>().selectedLanguage = 'English';
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.lightGray,
-      bottomNavigationBar: Container(
-        height: 200.h,
-        color: Colors.red,
-      ),
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.transparent,
         title: Column(
-          mainAxisSize: MainAxisSize
-              .min, // Important to prevent the column from taking full height
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              '1. Al-Fatihah',
+              '${widget.surah['surath_no']}. ${widget.surah['en_surath_name']}',
               style: CustomFontStyle().common(
                   fontWeight: FontWeight.w600,
                   fontSize: 18.sp,
                   color: AppColors.textBlack),
-            ),
-            Text(
-              'The Opening',
-              style: CustomFontStyle().common(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14.sp,
-                  color: AppColors.textBlack.withOpacity(0.6)),
             ),
           ],
         ),
@@ -58,152 +68,168 @@ class SurahDetailsScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(16),
-            color: AppColors.white,
-            child: Column(
-              children: [
-                Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 15.w, vertical: 13.h),
-                  margin: EdgeInsets.only(bottom: 10),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: AppColors.lightGreen),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 10.w,
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+      body: Consumer<DbProvider>(builder: (context, data, _) {
+        return data.isLoading == true
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    color: AppColors.white,
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 15.w, vertical: 13.h),
+                          margin: EdgeInsets.only(bottom: 10),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: AppColors.lightGreen),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${data.surahDetails?.first['arabic_surath_name']}',
+                                      maxLines: 1,
+                                      style: CustomFontStyle().common(
+                                        color: AppColors.black,
+                                        fontSize: 18.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      '${data.surahDetails?.first['ayath_count']} Verses',
+                                      style: CustomFontStyle().common(
+                                        color: AppColors.textBlack,
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                  child: CustomButton(
+                                borderColor: AppColors.secondaryGreen,
+                                bgColor: AppColors.secondaryGreen,
+                                text: 'Play Surah',
+                                onPress: () {},
+                                rightIcon: Expanded(
+                                    child: Icon(
+                                  Icons.play_arrow_rounded,
+                                  color: AppColors.white,
+                                )),
+                              )),
+                            ],
+                          ),
+                        ),
+                        Row(
                           children: [
-                            Text(
-                              'الافتتاح',
-                              maxLines: 1,
-                              style: CustomFontStyle().common(
-                                color: AppColors.black,
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.w600,
+                            Expanded(
+                              child: Text(
+                                'Translation Language',
+                                style: CustomFontStyle().common(
+                                  color: AppColors.textBlack.withOpacity(0.6),
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              '7 Verses',
-                              style: CustomFontStyle().common(
-                                color: AppColors.textBlack,
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w400,
+                            Container(
+                              width: 130.w, // Set width of the dropdown
+                              height: 50, // Adjust the height as needed
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+
+                              child: DropdownButtonHideUnderline(
+                                child: SizedBox(
+                                  height: 50,
+                                  child: DropdownButton<String>(
+                                    value: data.selectedLanguage,
+                                    onChanged: (String? newValue) {
+                                      data.switchLanguage(value: newValue, id: widget.surathId!);
+                                    },
+                                    items: <String>['English', 'malayalam']
+                                        .map<DropdownMenuItem<String>>((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: SizedBox(
+                                          width: double.infinity, // Ensures full width
+                                          child: Text(
+                                            value,
+                                            style: CustomFontStyle().common(
+                                              color: AppColors.textBlack,
+                                              fontSize: 14.sp,
+                                              fontWeight: FontWeight.w600,
+                                            ), // Adjust text size
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    isExpanded: true, // Ensures dropdown expands within container
+                                    dropdownColor: Colors.white, // Adjust dropdown color if needed
+                                  ),
+                                ),
                               ),
                             ),
+
                           ],
                         ),
-                      ),
-                      Expanded(
-                          child: CustomButton(
-                        borderColor: AppColors.secondaryGreen,
-                        bgColor: AppColors.secondaryGreen,
-                        text: 'Play Surah',
-                        onPress: () {},
-                        rightIcon: Expanded(
-                            child: Icon(
-                          Icons.play_arrow_rounded,
-                          color: AppColors.white,
-                        )),
-                      )),
-                    ],
-                  ),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Translation Language',
-                        style: CustomFontStyle().common(
-                          color: AppColors.textBlack.withOpacity(0.6),
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Consumer<QuranProvider>(
+                              builder: (context, data, _) {
+                            return Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                    child: TranslationSwitch(
+                                  switchOnOff: data.showTransliteration!,
+                                  onTap: (va) {
+                                    data.switchOptions(value: va);
+                                  },
+                                )),
+                                TranslationSwitch(
+                                  title: 'Translation',
+                                  switchOnOff: data.showTranslation!,
+                                  onTap: (va) {
+                                    data.switchOptions(
+                                        value: va, isTranslation: false);
+                                  },
+                                )
+                              ],
+                            );
+                          }),
                         ),
-                      ),
-                    ),
-                    Text(
-                      'English',
-                      style: CustomFontStyle().common(
-                        color: AppColors.textBlack,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Consumer<QuranProvider>(builder: (context, data, _) {
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-
-
-                            child: TranslationSwitch(
-                          switchOnOff: data.showTransliteration!,
-                          onTap: (va) {
-                            data.switchOptions(value: va);
-                          },
-                        )),
-                        TranslationSwitch(
-                          title: 'Translation',
-                          switchOnOff: data.showTranslation!,
-                          onTap: (va) {
-                            data.switchOptions(value: va, isTranslation: false);
-                          },
-                        )
                       ],
-                    );
-                  }),
-                ),
-              ],
-            ),
-          ),
-          // Row(
-          //   children: [
-          //     CloseButton(
-          //       onPressed: () {
-          //         context.read<QuranProvider>().changeTextSize(size: 25.sp);
-          //
-          //       },
-          //     ),
-          //     CloseButton(
-          //       onPressed: () {
-          //         context.read<QuranProvider>().changeTextSize(size: 30.sp);
-          //       },
-          //     ),
-          //     CloseButton(
-          //       onPressed: () {
-          //         context.read<QuranProvider>().changeTextSize(size: 20.sp);
-          //       },
-          //     ),
-          //   ],
-          // ),
-          Expanded(
-            child: ListView.separated(
-                padding: EdgeInsets.all(16),
-                itemBuilder: (context, index) {
-                  print('sefrads');
-                  return AyatTile();
-                },
-                separatorBuilder: (context, index) => SizedBox(
-                      height: 10,
                     ),
-                itemCount: 10),
-          )
-        ],
-      ),
+                  ),
+                  Expanded(
+                    child: ListView.separated(
+                        padding: EdgeInsets.all(16),
+                        itemBuilder: (context, index) {
+                          return AyatTile(
+                            ayath: data.surahDetails![index],
+                          );
+                        },
+                        separatorBuilder: (context, index) => SizedBox(
+                              height: 10,
+                            ),
+                        itemCount: data.surahDetails?.length ?? 0),
+                  )
+                ],
+              );
+      }),
     );
   }
 }

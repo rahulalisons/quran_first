@@ -17,7 +17,6 @@ class QuranProvider with ChangeNotifier {
     currentIndex = index;
     notifyListeners();
   }
-
   int selectedIndex = 0;
   final List<Widget> pages = <Widget>[
     HomeScreen(),

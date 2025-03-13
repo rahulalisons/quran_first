@@ -18,7 +18,10 @@ class SurahTile extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SurahDetailsScreen(),
+              builder: (context) => SurahDetailsScreen(
+                surathId: surah['surath_no'],
+                surah: surah,
+              ),
             ));
       },
       child: Container(

@@ -9,6 +9,7 @@ import 'package:timer_builder/timer_builder.dart';
 import '../../controller/db_provider.dart';
 import '../../core/values/colors.dart';
 import '../../core/values/strings.dart';
+import '../bookmark/bookmark.dart';
 import '../common_widgets/custom_textstyle.dart';
 import '../find_qibla/find_qibla.dart';
 
@@ -183,8 +184,8 @@ class HomeScreen extends StatelessWidget {
                           ),
                           buildGridItem(
                               onTap: () {
-                                // context.read<DbProvider>().fetchRandomAyath();
-                                context.read<DbProvider>().fetchAllSurath();
+
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => Bookmark(),));
                               },
                               title: 'Bookmarks',
                               icon: 'assets/app/images/home_bookmark.png')

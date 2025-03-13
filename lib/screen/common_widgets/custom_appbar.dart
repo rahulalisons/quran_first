@@ -7,7 +7,8 @@ import 'custom_textstyle.dart';
 class CustomAppbar extends StatelessWidget {
   final String? title;
   final List<Widget>? actions;
-  const CustomAppbar({super.key, this.title, this.actions});
+  final void Function()? onTap;
+  const CustomAppbar({super.key, this.title, this.actions,this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +28,12 @@ class CustomAppbar extends StatelessWidget {
         CircleAvatar(
           backgroundColor: AppColors.secondaryGreen,
           child: Center(
-            child: Icon(
-              Icons.bookmark_border,
-              color: AppColors.white,
+            child: InkWell(
+              onTap: onTap,
+              child: Icon(
+                Icons.bookmark_border,
+                color: AppColors.white,
+              ),
             ),
           ),
         ),

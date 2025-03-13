@@ -14,14 +14,6 @@ class DbProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<List<Map<String, dynamic>>> ? fetchAllSurath({String? search}) async {
-  //   print('cal api--$search');
-  //   // allSurath = await dbHelper.getAllSurah();
-  //   // log('random ayath is---$allSurath');
-  //   // notifyListeners();
-  //   return await dbHelper.getAllSurah(searchQuery:search );
-  // }
-
   Future<List<Map<String, dynamic>>>? _futureSurahList;
   Future<List<Map<String, dynamic>>>? get futureSurahList => _futureSurahList;
 
@@ -30,18 +22,52 @@ class DbProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // List<Map<String, dynamic>>? arData;
-  // List<Map<String, dynamic>>? enData;
-  // List<Map<String, dynamic>>? maData;
-  // List<Map<String, dynamic>>? arAyah;
-  // List<Map<String, dynamic>>? maAyah;
-  // List<Map<String, dynamic>>? enAyah;
-  // List<Map<String, dynamic>>? count;
-  // Future fetchChapters() async {
-  //   arData = await dbHelper.getAllEnSurah(code: 'ar');
-  //   maData = await dbHelper.getAllEnSurah(code: 'ma');
-  //   enData = await dbHelper.getAllEnSurah(code: 'en');
-  //   count = await dbHelper.getSurahAyahCounts(code: 'en');
-  //   notifyListeners();
-  // }
+  List<Map<String, dynamic>>? surahDetails;
+  bool isLoading = false;
+  void getSurahDetail(int surahNo,
+      {String? key, bool needLoader = true}) async {
+    isLoading = needLoader;
+    surahDetails = await dbHelper.getSurahDetails(surahNo, key: key);
+    isLoading = false;
+    notifyListeners();
+  }
+
+  String selectedLanguage = 'English';
+  switchLanguage({String? value, int? id}) {
+    print(value);
+    getSurahDetail(id!, key: value, needLoader: false);
+    selectedLanguage = value!;
+    notifyListeners();
+  }
+
+  Future<bool> addBookMark(
+      {int? surahNo, int? ayathNo, String? ayath, String? translation}) async {
+    bool? isAdded = await dbHelper.addBookmark(
+        surahNo: surahNo,
+        ayath: ayath,
+        ayathNo: ayathNo,
+        translation: translation);
+    return isAdded;
+  }
+
+  List<Map<String, dynamic>>? bookmarkedAyath;
+
+  Future<List<Map<String, dynamic>>>? _bookmarkedList;
+  Future<List<Map<String, dynamic>>>? get bookmarkedList => _bookmarkedList;
+
+  void getBookmarkedAyat() async {
+    _bookmarkedList = dbHelper.getBookmarkedAyaths();
+  }
+
+  void clearBookMark() async {
+    await dbHelper.clearBookmarks();
+  }
+
+  Future<bool> removeBookMark({int? surahNo, int? ayathNo}) async {
+    bool? isDeleted =
+        await dbHelper.removeBookmark(surahNo: surahNo, ayathNo: ayathNo);
+    return isDeleted;
+  }
+
+
 }

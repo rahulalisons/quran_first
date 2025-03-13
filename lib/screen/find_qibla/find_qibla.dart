@@ -165,7 +165,7 @@ class _FindQiblaState extends State<FindQibla> {
                               bool serviceEnabled =
                                   await locationR.requestService();
                               if (!serviceEnabled) {
-                                return; // Exit if the user denies enabling location
+                                return;
                               }
                             }
 

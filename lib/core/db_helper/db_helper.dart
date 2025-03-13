@@ -28,7 +28,7 @@ class DBHelper {
 
   Future<List<Map<String, dynamic>>> randomAyath() async {
     final db = await database;
-    return await db.rawQuery(''' 
+    return await db.rawQuery('''
   SELECT 
       ar_ayath.surath_no AS surah_no,
       ar_ayath.ayath_no AS ayath_no,
@@ -81,86 +81,106 @@ class DBHelper {
     }
   }
 
-
-
-
-
-  Future<List<Map<String, dynamic>>> getAllEnSurah({String? code}) async {
-    final db = await database;
-    return await db.query('${code}_surath');
-  }
-
-  Future<List<Map<String, dynamic>>> getSurahAyahCounts({String? code}) async {
+  Future<List<Map<String, dynamic>>> getSurahDetails(int surahNo,
+      {String? key}) async {
     final db = await database;
     return await db.rawQuery('''
-    SELECT surath_no, COUNT(*) as ayah_count
-    FROM ar_ayath
-    GROUP BY surath_no
-    ORDER BY surath_no
+  SELECT 
+      ar_surath.surath_no,
+      ar_surath.surath_name AS arabic_surath_name,
+      en_surath.surath_name AS english_surath_name,
+      (SELECT COUNT(*) FROM ar_ayath WHERE ar_ayath.surath_no = ar_surath.surath_no) AS ayath_count,
+      ar_ayath.ayath_no,
+      ar_ayath.ayath AS arabic_ayath,
+      
+      en_ayath_3.ayath AS english_ayath_translator_3,
+
+      CASE 
+          WHEN ? = 'english' THEN en_ayath_1.ayath 
+          ELSE NULL 
+      END AS english_ayath_translator_1,
+      
+      CASE 
+          WHEN ? = 'malayalam' THEN ma_ayath_1.ayath 
+          ELSE NULL 
+      END AS malayalam_ayath_translator_1,
+
+      -- Check if the ayath exists in the bookmark table and return true/false
+      CASE 
+          WHEN EXISTS (
+              SELECT 1 FROM bookmark 
+              WHERE bookmark.surath_no = ar_ayath.surath_no 
+              AND bookmark.ayath_no = ar_ayath.ayath_no
+          ) THEN 'true'
+          ELSE 'false'
+      END AS is_bookmarked
+
+  FROM ar_surath
+  JOIN en_surath ON ar_surath.surath_no = en_surath.surath_no
+  JOIN ar_ayath ON ar_surath.surath_no = ar_ayath.surath_no
+  LEFT JOIN en_ayath AS en_ayath_3 
+      ON ar_ayath.surath_no = en_ayath_3.surath_no 
+      AND ar_ayath.ayath_no = en_ayath_3.ayath_no 
+      AND en_ayath_3.translator_id = 3
+  LEFT JOIN en_ayath AS en_ayath_1
+      ON ar_ayath.surath_no = en_ayath_1.surath_no
+      AND ar_ayath.ayath_no = en_ayath_1.ayath_no
+      AND en_ayath_1.translator_id = 1
+  LEFT JOIN ma_ayath AS ma_ayath_1
+      ON ar_ayath.surath_no = ma_ayath_1.surath_no
+      AND ar_ayath.ayath_no = ma_ayath_1.ayath_no
+      AND ma_ayath_1.translator_id = 1
+  WHERE ar_surath.surath_no = ?
+  ORDER BY ar_ayath.ayath_no;
+  ''', [key, key, surahNo]);
+  }
+
+  Future<bool> addBookmark(
+      {int? surahNo, int? ayathNo, String? ayath, String? translation}) async {
+    final db = await database;
+    int rowsAffected = await db.rawInsert(
+        'INSERT INTO bookmark (surath_no, ayath_no, ayath, translation) VALUES (?, ?, ?, ?);',
+        [surahNo, ayathNo, ayath, translation]);
+    return rowsAffected > 0;
+  }
+
+  Future<List<Map<String, dynamic>>> getBookmarkedAyaths() async {
+    final db = await database;
+    return await db.rawQuery('''
+    SELECT 
+        b.surath_no, 
+        s.surath_name, 
+        b.ayath_no,
+        (SELECT COUNT(*) FROM bookmark WHERE surath_no = b.surath_no) AS bookmark_count, 
+        b.ayath, 
+        e1.ayath AS en_ayath_t1, 
+        e3.ayath AS en_ayath_t3,
+        1 AS isBookmarked  -- Adding isBookmarked key
+    FROM bookmark b
+    JOIN ar_surath s ON b.surath_no = s.surath_no
+    LEFT JOIN en_ayath e1 ON b.surath_no = e1.surath_no 
+                          AND b.ayath_no = e1.ayath_no 
+                          AND e1.translator_id = 1
+    LEFT JOIN en_ayath e3 ON b.surath_no = e3.surath_no 
+                          AND b.ayath_no = e3.ayath_no 
+                          AND e3.translator_id = 3;
   ''');
   }
 
-  Future<List<Map<String, dynamic>>> getAllJuz() async {
-    final db = await database;
-    return await db.query('juzh');
-  }
+  Future<bool> removeBookmark({int? surahNo, int? ayathNo}) async {
+    final db = await database; // Get database instance
 
-  Future<List<Map<String, dynamic>>> getAyathsBySurah(
-      {int? surahNo, String? code}) async {
-    final db = await database;
-    return await db.query(
-      '${code}_ayath',
-      where: 'surath_no = ?',
-      whereArgs: [surahNo],
+    int rowsAffected = await db.delete(
+      'bookmark',
+      where: 'surath_no = ? AND ayath_no = ?',
+      whereArgs: [surahNo, ayathNo],
     );
+
+    return rowsAffected > 0;
   }
 
-  // Future<List<JuzhData>> fetchJuzhData() async {
-  //   final db = await database;
-  //   final result = await db.rawQuery('''
-  //   WITH AyahRanks AS (
-  //       SELECT
-  //           j.juzh_no,
-  //           j.surath_no,
-  //           j.ayath_no,
-  //           ROW_NUMBER() OVER (PARTITION BY j.surath_no ORDER BY j.ayath_no) AS ayah_rank
-  //       FROM
-  //           juzh j
-  //   )
-  //   SELECT
-  //       ar.juzh_no,
-  //       ar.surath_no,
-  //       s.surath_name,
-  //       MIN(ar.ayah_rank) AS start_ayah,
-  //       MAX(ar.ayah_rank) AS end_ayah,
-  //       COUNT(*) AS verse_count
-  //   FROM
-  //       AyahRanks ar
-  //   JOIN
-  //       en_surath s ON ar.surath_no = s.surath_no
-  //   GROUP BY
-  //       ar.juzh_no, ar.surath_no
-  //   ORDER BY
-  //       ar.juzh_no, ar.surath_no;
-  // ''');
-  //
-  //   Map<int, List<SurahData>> juzhMap = {};
-  //
-  //   for (final row in result) {
-  //     final juzhNo = row['juzh_no'] as int;
-  //     final surahData = SurahData(
-  //       surahName: row['surath_name'] as String,
-  //       startAyah: row['start_ayah'] as int,
-  //       endAyah: row['end_ayah'] as int,
-  //       verseCount: row['verse_count'] as int,
-  //     );
-  //
-  //     juzhMap.putIfAbsent(juzhNo, () => []);
-  //     juzhMap[juzhNo]!.add(surahData);
-  //   }
-  //
-  //   return juzhMap.entries.map((entry) {
-  //     return JuzhData(juzhNo: entry.key, surahs: entry.value);
-  //   }).toList();
-  // }
+  Future<void> clearBookmarks() async {
+    final db = await database;
+    await db.rawDelete('DELETE FROM bookmark;');
+  }
 }

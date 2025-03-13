@@ -12,6 +12,7 @@ import 'package:quran_first/screen/quran/widgets/surah_tile.dart';
 
 import '../../core/utils/helper/debounce.dart';
 import '../../core/values/colors.dart';
+import '../bookmark/bookmark.dart';
 import '../common_widgets/custom_appbar.dart';
 import '../common_widgets/custom_textfield.dart';
 
@@ -28,7 +29,12 @@ class QuranScreen extends StatelessWidget {
       backgroundColor: AppColors.white,
       appBar: PreferredSize(
           preferredSize: Size(ScreenUtil().screenWidth, 50),
-          child: CustomAppbar()),
+          child: CustomAppbar(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Bookmark(),));
+            },
+
+          )),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

@@ -1,13 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:quran_first/controller/db_provider.dart';
 import 'package:quran_first/controller/quran_provider.dart';
 
 import '../../../core/values/colors.dart';
 import '../../common_widgets/custom_textstyle.dart';
 
-class AyatTile extends StatelessWidget {
-  const AyatTile({super.key});
+class AyatTile extends StatefulWidget {
+  final ayath;
+  const AyatTile({super.key, this.ayath});
+
+  @override
+  State<AyatTile> createState() => _AyatTileState();
+}
+
+
+
+class _AyatTileState extends State<AyatTile> {
+  String? bookmarked;
+  @override
+  void initState() {
+    // TODO: implement initState
+    bookmarked = widget.ayath['is_bookmarked'];
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +41,11 @@ class AyatTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Align(
-              alignment: Alignment.topRight,
-              child:
-                  ayathText(text: 'بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ')),
+            alignment: Alignment.topRight,
+            child: ayathText(
+              text: '${widget.ayath['arabic_ayath']}',
+            ),
+          ),
           transliteration == true
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +53,17 @@ class AyatTile extends StatelessWidget {
                     Divider(
                       height: 20,
                     ),
-                    ayathText(text: 'Bismillah hir rahman nir raheem'),
+                    Html(
+                      data: widget.ayath['english_ayath_translator_3'],
+                      shrinkWrap: true,
+                      style: {
+                        "body": Style(
+                            fontFamily: 'Manrope',
+                            color: AppColors.textBlack,
+                            fontSize: FontSize(15.sp),
+                            textAlign: TextAlign.start),
+                      },
+                    ),
                   ],
                 )
               : SizedBox(),
@@ -45,8 +75,8 @@ class AyatTile extends StatelessWidget {
                       height: 20,
                     ),
                     ayathText(
-                        text:
-                            'In the Name of Allah, Most Gracious,Most Merciful.'),
+                        text: widget.ayath['malayalam_ayath_translator_1'] ??
+                            widget.ayath['english_ayath_translator_1']),
                   ],
                 )
               : SizedBox(),
@@ -57,7 +87,7 @@ class AyatTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '1',
+                '${widget.ayath['ayath_no']}--$bookmarked',
                 style: CustomFontStyle().common(
                   color: AppColors.textBlack.withOpacity(.25),
                   fontSize: 16.sp,
@@ -65,9 +95,58 @@ class AyatTile extends StatelessWidget {
                 ),
               ),
               Spacer(),
-              buttonIcon(),
-              buttonIcon(icons: Icon(Icons.bookmark)),
-              buttonIcon(icons: Icon(Icons.share)),
+              buttonIcon(onTap: () {
+                context.read<DbProvider>().clearBookMark();
+              }),
+              buttonIcon(
+                  icons: bookmarked == "true"
+                      ? Icon(Icons.bookmark)
+                      : Icon(Icons.bookmark_border),
+                  onTap: bookmarked != "true"
+                      ? () {
+                          print('asdaqwd');
+                          context
+                              .read<DbProvider>()
+                              .addBookMark(
+                                ayathNo: widget.ayath['ayath_no'],
+                                ayath: widget.ayath['arabic_ayath'],
+                                surahNo: widget.ayath['surath_no'],
+                                translation: widget.ayath[
+                                        'malayalam_ayath_translator_1'] ??
+                                    widget.ayath['english_ayath_translator_1'],
+                              )
+                              .then(
+                            (value) {
+                              print('add sucee--$value');
+                              if (value) {
+                                setState(() {
+                                  bookmarked = 'true';
+                                });
+                              }
+                            },
+                          );
+                        }
+                      : () {
+                          context
+                              .read<DbProvider>()
+                              .removeBookMark(
+                                  ayathNo: widget.ayath['ayath_no'],
+                                  surahNo: widget.ayath['surath_no'])
+                              .then(
+                            (value) {
+                              if (value) {
+                                setState(() {
+                                  bookmarked = 'false';
+                                });
+                              }
+                            },
+                          );
+                        }),
+              buttonIcon(
+                  icons: Icon(Icons.share),
+                  onTap: () {
+                    context.read<DbProvider>().getBookmarkedAyat();
+                  }),
             ],
           )
         ],
@@ -76,7 +155,10 @@ class AyatTile extends StatelessWidget {
   }
 }
 
-Widget ayathText({String? text, TextAlign? textAlign}) {
+Widget ayathText({
+  String? text,
+  TextAlign? textAlign,
+}) {
   return Consumer<QuranProvider>(builder: (context, size, _) {
     return Text(
       textAlign: textAlign ?? TextAlign.start,
