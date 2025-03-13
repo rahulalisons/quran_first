@@ -16,8 +16,6 @@ class AyatTile extends StatefulWidget {
   State<AyatTile> createState() => _AyatTileState();
 }
 
-
-
 class _AyatTileState extends State<AyatTile> {
   String? bookmarked;
   @override
@@ -142,11 +140,7 @@ class _AyatTileState extends State<AyatTile> {
                             },
                           );
                         }),
-              buttonIcon(
-                  icons: Icon(Icons.share),
-                  onTap: () {
-                    context.read<DbProvider>().getBookmarkedAyat();
-                  }),
+              buttonIcon(icons: Icon(Icons.share), onTap: () {}),
             ],
           )
         ],

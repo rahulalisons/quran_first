@@ -16,7 +16,6 @@ import '../find_qibla/find_qibla.dart';
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     var ctrl = Provider.of<QuranProvider>(context);
     var size = MediaQuery.of(context).size;
     HijriCalendar.setLocal('en');
@@ -126,10 +125,7 @@ class HomeScreen extends StatelessWidget {
                       }),
                     ],
                   ),
-                  Positioned(
-                    top: size.height / 4.1,
-                    child: ReandomAyath()
-                  ),
+                  Positioned(top: size.height / 4.1, child: ReandomAyath()),
                 ],
               ),
             ),
@@ -184,8 +180,12 @@ class HomeScreen extends StatelessWidget {
                           ),
                           buildGridItem(
                               onTap: () {
-
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => Bookmark(),));
+                                // context.read<DbProvider>().ferchdta();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Bookmark(),
+                                    ));
                               },
                               title: 'Bookmarks',
                               icon: 'assets/app/images/home_bookmark.png')

@@ -15,13 +15,16 @@ import '../common_widgets/custom_textstyle.dart';
 class SurahDetailsScreen extends StatefulWidget {
   final int? surathId;
   final surah;
-  const SurahDetailsScreen({super.key, this.surathId, this.surah});
+  final int? ayathNumber;
+  const SurahDetailsScreen(
+      {super.key, this.surathId, this.surah, this.ayathNumber});
 
   @override
   State<SurahDetailsScreen> createState() => _SurahDetailsScreenState();
 }
 
 class _SurahDetailsScreenState extends State<SurahDetailsScreen> {
+  final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
     // TODO: implement initState
@@ -31,9 +34,27 @@ class _SurahDetailsScreenState extends State<SurahDetailsScreen> {
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
     context.read<DbProvider>().getSurahDetail(widget.surathId!, key: 'english');
     context.read<DbProvider>().selectedLanguage = 'English';
-    super.didChangeDependencies();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.ayathNumber != null && widget.ayathNumber! > 0) {
+        _scrollToAyath(widget.ayathNumber!);
+      } else {
+        _scrollToAyath(0);
+      }
+    });
+  }
+
+  void _scrollToAyath(int index) {
+    Future.delayed(Duration(milliseconds: 300), () {
+      _scrollController.animateTo(
+        (index == 1 ? 0 : index) * 340.0,
+        duration: Duration(milliseconds: 1000),
+        curve: Curves.easeInOut,
+      );
+    });
   }
 
   @override
@@ -150,21 +171,24 @@ class _SurahDetailsScreenState extends State<SurahDetailsScreen> {
                               width: 130.w, // Set width of the dropdown
                               height: 50, // Adjust the height as needed
                               padding: EdgeInsets.symmetric(horizontal: 5),
-
                               child: DropdownButtonHideUnderline(
                                 child: SizedBox(
                                   height: 50,
                                   child: DropdownButton<String>(
                                     value: data.selectedLanguage,
                                     onChanged: (String? newValue) {
-                                      data.switchLanguage(value: newValue, id: widget.surathId!);
+                                      data.switchLanguage(
+                                          value: newValue,
+                                          id: widget.surathId!);
                                     },
                                     items: <String>['English', 'malayalam']
-                                        .map<DropdownMenuItem<String>>((String value) {
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
                                       return DropdownMenuItem<String>(
                                         value: value,
                                         child: SizedBox(
-                                          width: double.infinity, // Ensures full width
+                                          width: double
+                                              .infinity, // Ensures full width
                                           child: Text(
                                             value,
                                             style: CustomFontStyle().common(
@@ -176,13 +200,14 @@ class _SurahDetailsScreenState extends State<SurahDetailsScreen> {
                                         ),
                                       );
                                     }).toList(),
-                                    isExpanded: true, // Ensures dropdown expands within container
-                                    dropdownColor: Colors.white, // Adjust dropdown color if needed
+                                    isExpanded:
+                                        true, // Ensures dropdown expands within container
+                                    dropdownColor: Colors
+                                        .white, // Adjust dropdown color if needed
                                   ),
                                 ),
                               ),
                             ),
-
                           ],
                         ),
                         Padding(
@@ -216,6 +241,7 @@ class _SurahDetailsScreenState extends State<SurahDetailsScreen> {
                   ),
                   Expanded(
                     child: ListView.separated(
+                        controller: _scrollController,
                         padding: EdgeInsets.all(16),
                         itemBuilder: (context, index) {
                           return AyatTile(
