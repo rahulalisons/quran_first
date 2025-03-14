@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:quran_first/screen/on_boarding/on_boarding.dart';
+import 'package:quran_first/screen/splash_screen/splash_screen.dart';
 
 import 'controller/db_provider.dart';
 import 'controller/quran_provider.dart';
@@ -29,7 +30,8 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
-          home: const OnBoarding(),
+          // home: const OnBoarding(),
+          home: const SplashScreen(),
         ),
       ),
     );

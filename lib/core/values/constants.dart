@@ -14,8 +14,8 @@ class AppConstants {
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-String ?userId;
-String KuserId='userId';
+
+const keyIsFirstTime="keyIsFirstTime";
 
 Future<void> launch(String url) async {
   if (!await launchUrlString(url)) {

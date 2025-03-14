@@ -1,12 +1,19 @@
+import 'dart:async';
 import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../core/utils/helper/custom_dialog.dart';
+import '../core/utils/helper/shared_preference.dart';
+import '../core/values/constants.dart';
+import '../screen/bottom_bar/bottom_bar_section.dart';
 import '../screen/home/home.dart';
+import '../screen/on_boarding/on_boarding.dart';
 import '../screen/prayer_time/prayer_time.dart';
 import '../screen/quran/quran_screen.dart';
 import '../screen/settings/settings.dart';
@@ -17,7 +24,9 @@ class QuranProvider with ChangeNotifier {
     currentIndex = index;
     notifyListeners();
   }
+
   int selectedIndex = 0;
+  int previousIndex = 0;
   final List<Widget> pages = <Widget>[
     HomeScreen(),
     QuranScreen(),
@@ -26,8 +35,50 @@ class QuranProvider with ChangeNotifier {
   ];
 
   bottomnaviagtionSwitch(int index) {
+    previousIndex = selectedIndex;
     selectedIndex = index;
     notifyListeners();
+  }
+
+  isFirstTimeOrNot({BuildContext? context}) {
+    Timer(const Duration(seconds: 3), () async {
+      final bool isFirstTime = await SharedPrefUtil.contains(keyIsFirstTime);
+      if (isFirstTime) {
+        final bool firstTime = await SharedPrefUtil.getBoolean(keyIsFirstTime);
+        if (firstTime) {
+          Navigator.pushAndRemoveUntil(
+            context!,
+            PageTransition(
+              type: PageTransitionType.rightToLeft,
+              duration: Duration(milliseconds: 500),
+              child: OnBoarding(),
+            ),
+            (Route<dynamic> route) => false,
+          );
+        } else {
+          Navigator.pushAndRemoveUntil(
+            context!,
+            PageTransition(
+              type: PageTransitionType.rightToLeft,
+              duration: Duration(milliseconds: 500),
+              child: BottomBarSection(),
+            ),
+            (Route<dynamic> route) => false,
+          );
+
+        }
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context!,
+          PageTransition(
+            type: PageTransitionType.rightToLeft,
+            duration: Duration(milliseconds: 500),
+            child: OnBoarding(),
+          ),
+              (Route<dynamic> route) => false,
+        );
+      }
+    });
   }
 
   int? juzOrSurah = 0;

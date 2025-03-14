@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:quran_first/controller/quran_provider.dart';
 import 'package:quran_first/screen/home/widgets/reandom_ayath.dart';
 import 'package:timer_builder/timer_builder.dart';
-import '../../controller/db_provider.dart';
 import '../../core/values/colors.dart';
 import '../../core/values/strings.dart';
 import '../bookmark/bookmark.dart';
@@ -39,6 +38,15 @@ class HomeScreen extends StatelessWidget {
         actions: [
           InkWell(
             onTap: () {
+              // Navigator.push(
+              //   context,
+              //   PageTransition(
+              //     type: PageTransitionType.sharedAxisHorizontal,
+              //     duration: Duration(milliseconds: 500),
+              //     child: Settings(),
+              //   ),
+              //       // (Route<dynamic> route) => false,
+              // );
               context.read<QuranProvider>().bottomnaviagtionSwitch(3);
             },
             child: Image.asset(
@@ -225,12 +233,14 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                icon ?? 'assets/app/images/home_quran.png',
-                width: 60.w,
-                height: 60.w,
+              Expanded(
+                child: Image.asset(
+                  icon ?? 'assets/app/images/home_quran.png',
+                  width: 60.w,
+                  height: 60.w,
+                ),
               ),
-              SizedBox(height: 5.h),
+
               Text(
                 title ?? 'Read Quran',
                 style: CustomFontStyle().common(
@@ -239,6 +249,7 @@ class HomeScreen extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
+              SizedBox(height: 15.h),
             ],
           ),
         ),

@@ -13,6 +13,8 @@ class ImageStrings {
   static const String linkedIn = '${AppConstants.imagePath}linkedIn.png';
   static const String instagram = '${AppConstants.imagePath}instagarm.png';
   static const String twitter = '${AppConstants.imagePath}twitter.png';
+  static const String appLogo = '${AppConstants.imagePath}app_logo.png';
+  static const String splashStar = '${AppConstants.imagePath}splash_star.png';
   static const String noBookMark = '${AppConstants.imagePath}no_bookmark.png';
   static const String onboarding1 = '${AppConstants.imagePath}splash_one.png';
   static const String onboarding2 = '${AppConstants.imagePath}spalsh_two.png';
