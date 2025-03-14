@@ -31,26 +31,28 @@ class DBHelper {
   Future<List<Map<String, dynamic>>> randomAyath() async {
     final db = await database;
     return await db.rawQuery('''
-  SELECT 
-      ar_ayath.surath_no AS surah_no,
-      ar_ayath.ayath_no AS ayath_no,
-      ar_ayath.ayath AS ar_ayath_text,
-      en_ayath.ayath AS en_ayath_text,
-      en_surath.surath_name AS surah_name
-  FROM 
-      ar_ayath
-  JOIN en_ayath 
-      ON ar_ayath.surath_no = en_ayath.surath_no 
-      AND ar_ayath.ayath_no = en_ayath.ayath_no
-  JOIN en_surath 
-      ON ar_ayath.surath_no = en_surath.surath_no
-  WHERE 
-      LENGTH(ar_ayath.ayath) < 150  -- Ensure Arabic Ayah text is less than 100 characters
-      AND LENGTH(en_ayath.ayath) < 150  -- Ensure English translation is also less than 100 characters
-  ORDER BY RANDOM()
-  LIMIT 1;
+    SELECT 
+        ar_ayath.surath_no AS surah_no,
+        ar_ayath.ayath_no AS ayath_no,
+        ar_ayath.ayath AS ar_ayath_text,
+        en_ayath.ayath AS en_ayath_text,
+        en_surath.surath_name AS surah_name
+    FROM 
+        ar_ayath
+    JOIN en_ayath 
+        ON ar_ayath.surath_no = en_ayath.surath_no 
+        AND ar_ayath.ayath_no = en_ayath.ayath_no
+    JOIN en_surath 
+        ON ar_ayath.surath_no = en_surath.surath_no
+    WHERE 
+        en_ayath.translator_id = 1  -- Filter English translation by translator ID
+        AND LENGTH(ar_ayath.ayath) < 150  -- Ensure Arabic Ayah text is less than 150 characters
+        AND LENGTH(en_ayath.ayath) < 150  -- Ensure English translation is also less than 150 characters
+    ORDER BY RANDOM()
+    LIMIT 1;
   ''');
   }
+
 
   Future<List<Map<String, dynamic>>> getAllSurah({String? searchQuery}) async {
     final db = await database;

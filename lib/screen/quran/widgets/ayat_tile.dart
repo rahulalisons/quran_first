@@ -16,8 +16,6 @@ class AyatTile extends StatefulWidget {
   State<AyatTile> createState() => _AyatTileState();
 }
 
-
-
 class _AyatTileState extends State<AyatTile> {
   String? bookmarked;
   @override
@@ -58,6 +56,7 @@ class _AyatTileState extends State<AyatTile> {
                       shrinkWrap: true,
                       style: {
                         "body": Style(
+                            fontWeight: FontWeight.w600,
                             fontFamily: 'Manrope',
                             color: AppColors.textBlack,
                             fontSize: FontSize(15.sp),
@@ -74,9 +73,12 @@ class _AyatTileState extends State<AyatTile> {
                     Divider(
                       height: 20,
                     ),
-                    ayathText(
-                        text: widget.ayath['malayalam_ayath_translator_1'] ??
-                            widget.ayath['english_ayath_translator_1']),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: ayathText(
+                          text: widget.ayath['malayalam_ayath_translator_1'] ??
+                              widget.ayath['english_ayath_translator_1']),
+                    ),
                   ],
                 )
               : SizedBox(),
@@ -87,7 +89,7 @@ class _AyatTileState extends State<AyatTile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${widget.ayath['ayath_no']}--$bookmarked',
+                '${widget.ayath['ayath_no']}',
                 style: CustomFontStyle().common(
                   color: AppColors.textBlack.withOpacity(.25),
                   fontSize: 16.sp,
@@ -142,11 +144,7 @@ class _AyatTileState extends State<AyatTile> {
                             },
                           );
                         }),
-              buttonIcon(
-                  icons: Icon(Icons.share),
-                  onTap: () {
-
-                  }),
+              buttonIcon(icons: Icon(Icons.share), onTap: () {}),
             ],
           )
         ],

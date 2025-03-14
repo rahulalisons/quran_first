@@ -48,13 +48,13 @@ class _SurahDetailsScreenState extends State<SurahDetailsScreen> {
   }
 
   void _scrollToAyath(int index) {
-    Future.delayed(Duration(milliseconds: 300), () {
-      _scrollController.animateTo(
-        index * 60.0,
-        duration: Duration(milliseconds: 1000),
-        curve: Curves.easeInOut,
-      );
-    });
+    // Future.delayed(Duration(milliseconds: 300), () {
+    //   _scrollController.animateTo(
+    //     index * 60.0,
+    //     duration: Duration(milliseconds: 1000),
+    //     curve: Curves.easeInOut,
+    //   );
+    // });
   }
 
   @override

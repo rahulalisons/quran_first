@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:quran_first/controller/quran_provider.dart';
 import 'package:quran_first/screen/home/widgets/reandom_ayath.dart';
 import 'package:timer_builder/timer_builder.dart';
+import '../../controller/db_provider.dart';
 import '../../core/values/colors.dart';
 import '../../core/values/strings.dart';
 import '../bookmark/bookmark.dart';
