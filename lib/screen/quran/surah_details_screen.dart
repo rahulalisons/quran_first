@@ -39,21 +39,19 @@ class _SurahDetailsScreenState extends State<SurahDetailsScreen> {
 
   @override
   void didChangeDependencies() async {
+    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     var provider = Provider.of<DbProvider>(context, listen: false);
-
     provider.selectedTranslator =
         Translator(id: 1, name: 'Shakir', language: "English");
-
-    await provider.getSurahDetail(widget.surathId!); // ✅ Waits for data
-
-    final ayahCount = provider.surahDetails?.length ?? 0;
-    for (int i = 0; i < ayahCount; i++) {
+    provider.getSurahDetail(
+      widget.surathId!,
+    );
+    // final ayahCount = provider.surahDetails?.length ?? 0;
+    for (int i = 0; i < 289; i++) {
       _ayahKeys[i] = GlobalKey();
     }
-
     context.read<DbProvider>().fetchTranslator();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.ayathNumber != null && widget.ayathNumber! > 0) {
         _scrollToAyath(widget.ayathNumber!);
@@ -64,6 +62,7 @@ class _SurahDetailsScreenState extends State<SurahDetailsScreen> {
   }
 
   void _scrollToAyath(int ayahIndex) {
+    print('1111---$ayahIndex');
     final key = _ayahKeys[ayahIndex - 1];
     if (key != null && key.currentContext != null) {
       Scrollable.ensureVisible(
@@ -86,6 +85,7 @@ class _SurahDetailsScreenState extends State<SurahDetailsScreen> {
           onTap: () {
             switchAya(
               onAyaSelected: (index) {
+                print('index is--$index');
                 _scrollToAyath(index); // Scroll to the selected Ayah
               },
               context: context,
