@@ -7,6 +7,7 @@ import '../../core/values/colors.dart';
 import '../../core/values/strings.dart';
 import '../common_widgets/custom_appbar.dart';
 import '../common_widgets/custom_textstyle.dart';
+import '../contact_us/contact_us.dart';
 
 class Settings extends StatelessWidget {
   const Settings({super.key});
@@ -38,6 +39,13 @@ class Settings extends StatelessWidget {
               SettingsTile(
                 title: 'Contact Us',
                 image: ImageStrings.contactUs,
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ContactUs(),
+                      ));
+                },
               ),
               SettingsTile(
                 title: 'Rate App',

@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 
 import '../core/db_helper/db_helper.dart';
+import '../models/bookmark_model.dart';
 
 class DbProvider with ChangeNotifier {
   final DBHelper dbHelper = DBHelper();
@@ -50,14 +52,14 @@ class DbProvider with ChangeNotifier {
     return isAdded;
   }
 
-  List<Map<String, dynamic>>? bookmarkedAyath;
-
-  Future<List<Map<String, dynamic>>>? _bookmarkedList;
-  Future<List<Map<String, dynamic>>>? get bookmarkedList => _bookmarkedList;
-
-  void getBookmarkedAyat() async {
-    _bookmarkedList = dbHelper.getBookmarkedAyaths();
-  }
+  // List<Map<String, dynamic>>? bookmarkedAyath;
+  //
+  // Future<List<Map<String, dynamic>>>? _bookmarkedList;
+  // Future<List<Map<String, dynamic>>>? get bookmarkedList => _bookmarkedList;
+  //
+  // void getBookmarkedAyat() async {
+  //   _bookmarkedList = dbHelper.getBookmarkedAyaths();
+  // }
 
   void clearBookMark() async {
     await dbHelper.clearBookmarks();
@@ -65,9 +67,25 @@ class DbProvider with ChangeNotifier {
 
   Future<bool> removeBookMark({int? surahNo, int? ayathNo}) async {
     bool? isDeleted =
-        await dbHelper.removeBookmark(surahNo: surahNo, ayathNo: ayathNo);
+    await dbHelper.removeBookmark(surahNo: surahNo, ayathNo: ayathNo);
     return isDeleted;
   }
 
 
+  List<SurahBookmarks>? bookmarkedAyath;
+  bool? isLoadingBk = false;
+  void fetchBookmarkedAyath() async {
+    isLoading = true;
+    bookmarkedAyath = await dbHelper.getBookmark();
+    isLoading = false;
+    notifyListeners();
+  }
+
+  removeAyath({int? surahNo, Bookmark? bookmarkAyath}) {
+    SurahBookmarks selectedAyath;
+    selectedAyath = bookmarkedAyath!.firstWhere((e) => e.surahNo == surahNo);
+    selectedAyath.bookmarks
+        .removeWhere((e) => e.ayahNo == bookmarkAyath?.ayahNo);
+    notifyListeners();
+  }
 }

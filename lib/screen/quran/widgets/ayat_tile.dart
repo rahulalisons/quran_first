@@ -145,7 +145,7 @@ class _AyatTileState extends State<AyatTile> {
               buttonIcon(
                   icons: Icon(Icons.share),
                   onTap: () {
-                    context.read<DbProvider>().getBookmarkedAyat();
+
                   }),
             ],
           )

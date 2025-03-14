@@ -4,6 +4,8 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../../models/bookmark_model.dart';
+
 class DBHelper {
   static Database? _database;
 
@@ -144,28 +146,7 @@ class DBHelper {
     return rowsAffected > 0;
   }
 
-  Future<List<Map<String, dynamic>>> getBookmarkedAyaths() async {
-    final db = await database;
-    return await db.rawQuery('''
-    SELECT 
-        b.surath_no, 
-        s.surath_name, 
-        b.ayath_no,
-        (SELECT COUNT(*) FROM bookmark WHERE surath_no = b.surath_no) AS bookmark_count, 
-        b.ayath, 
-        e1.ayath AS en_ayath_t1, 
-        e3.ayath AS en_ayath_t3,
-        1 AS isBookmarked  -- Adding isBookmarked key
-    FROM bookmark b
-    JOIN ar_surath s ON b.surath_no = s.surath_no
-    LEFT JOIN en_ayath e1 ON b.surath_no = e1.surath_no 
-                          AND b.ayath_no = e1.ayath_no 
-                          AND e1.translator_id = 1
-    LEFT JOIN en_ayath e3 ON b.surath_no = e3.surath_no 
-                          AND b.ayath_no = e3.ayath_no 
-                          AND e3.translator_id = 3;
-  ''');
-  }
+
 
   Future<bool> removeBookmark({int? surahNo, int? ayathNo}) async {
     final db = await database; // Get database instance
@@ -183,4 +164,50 @@ class DBHelper {
     final db = await database;
     await db.rawDelete('DELETE FROM bookmark;');
   }
+
+
+  //  test
+  Future<List<SurahBookmarks>> getBookmark() async {
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.rawQuery('''
+    SELECT 
+        b.surath_no, 
+        s.surath_name, 
+        b.ayath_no,
+        (SELECT COUNT(*) FROM bookmark WHERE surath_no = b.surath_no) AS bookmark_count, 
+        b.ayath, 
+        e1.ayath AS en_ayath_t1, 
+        e3.ayath AS en_ayath_t3,
+        1 AS isBookmarked  
+    FROM bookmark b
+    JOIN ar_surath s ON b.surath_no = s.surath_no
+    LEFT JOIN en_ayath e1 ON b.surath_no = e1.surath_no 
+                          AND b.ayath_no = e1.ayath_no 
+                          AND e1.translator_id = 1
+    LEFT JOIN en_ayath e3 ON b.surath_no = e3.surath_no 
+                          AND b.ayath_no = e3.ayath_no 
+                          AND e3.translator_id = 3;
+  ''');
+
+    // Group by Surah
+    Map<int, SurahBookmarks> surahMap = {};
+
+    for (var row in result) {
+      int surahNo = row['surath_no'];
+      if (!surahMap.containsKey(surahNo)) {
+        surahMap[surahNo] = SurahBookmarks(
+          surahNo: surahNo,
+          surahName: row['surath_name'],
+          bookmarkCount: row['bookmark_count'],
+          bookmarks: [],
+        );
+      }
+      surahMap[surahNo]!.bookmarks.add(Bookmark.fromMap(row));
+    }
+
+    return surahMap.values.toList();
+  }
+
+
+
 }
