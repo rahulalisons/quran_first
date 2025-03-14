@@ -90,6 +90,7 @@ class _AyatTileState extends State<AyatTile> {
             children: [
               Text(
                 '${widget.ayath['ayath_no']}',
+
                 style: CustomFontStyle().common(
                   color: AppColors.textBlack.withOpacity(.25),
                   fontSize: 16.sp,
