@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:quran_first/controller/db_provider.dart';
@@ -43,6 +44,17 @@ class ReandomAyath extends StatelessWidget {
                   SizedBox(
                     height: 10.h,
                   ),
+                  // Html(
+                  //   data: random.randomAyath?.first['en_ayath_text'],
+                  //   shrinkWrap: true,
+                  //   style: {
+                  //     "body": Style(
+                  //         fontFamily: 'Manrope',
+                  //         color: AppColors.white,
+                  //         fontSize: FontSize(14.sp),
+                  //         textAlign: TextAlign.start),
+                  //   },
+                  // ),
                   Text(
                     '${random.randomAyath?.first['en_ayath_text']}',
                     textAlign: TextAlign.center,

@@ -7,9 +7,13 @@ import 'package:quran_first/core/values/colors.dart';
 import 'package:quran_first/core/values/strings.dart';
 import 'package:quran_first/screen/common_widgets/custom_button.dart';
 import 'package:quran_first/screen/quran/widgets/ayat_tile.dart';
+import 'package:quran_first/screen/quran/widgets/ayath_index_list.dart';
+import 'package:quran_first/screen/quran/widgets/translation_change.dart';
 import 'package:quran_first/screen/quran/widgets/translation_switch.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 
 import '../../controller/db_provider.dart';
+import '../../models/translator_model.dart';
 import '../common_widgets/custom_textstyle.dart';
 
 class SurahDetailsScreen extends StatefulWidget {
@@ -24,7 +28,8 @@ class SurahDetailsScreen extends StatefulWidget {
 }
 
 class _SurahDetailsScreenState extends State<SurahDetailsScreen> {
-  final ScrollController _scrollController = ScrollController();
+  AutoScrollController? controller;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -32,29 +37,33 @@ class _SurahDetailsScreenState extends State<SurahDetailsScreen> {
   }
 
   @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
+  void didChangeDependencies() async {
     super.didChangeDependencies();
-    context.read<DbProvider>().getSurahDetail(widget.surathId!, key: 'english');
-    context.read<DbProvider>().selectedLanguage = 'English';
+    var provider = Provider.of<DbProvider>(context, listen: false);
+
+    provider.selectedTranslator =
+        Translator(id: 1, name: 'Shakir', language: "English");
+    await provider.getSurahDetail(widget.surathId!);
+    controller = AutoScrollController(
+        viewportBoundaryGetter: () =>
+            Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
+        axis: Axis.vertical);
+    context.read<DbProvider>().fetchTranslator();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.ayathNumber != null && widget.ayathNumber! > 0) {
-        _scrollToAyath(widget.ayathNumber!);
-      } else {
-        _scrollToAyath(0);
-      }
+      Future.delayed(Duration(milliseconds: 500), () {
+        if (widget.ayathNumber != null && widget.ayathNumber! > 0) {
+          _scrollToAyath(widget.ayathNumber!);
+        } else {
+          _scrollToAyath(0);
+        }
+      });
     });
   }
 
-  void _scrollToAyath(int index) {
-    Future.delayed(Duration(milliseconds: 300), () {
-      _scrollController.animateTo(
-        (index == 1 ? 0 : index) * 340.0,
-        duration: Duration(milliseconds: 1000),
-        curve: Curves.easeInOut,
-      );
-    });
+  Future _scrollToAyath(int ayahIndex) async {
+    await controller!
+        .scrollToIndex(ayahIndex - 1, preferPosition: AutoScrollPosition.begin);
   }
 
   @override
@@ -65,17 +74,31 @@ class _SurahDetailsScreenState extends State<SurahDetailsScreen> {
         centerTitle: true,
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.transparent,
-        title: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              '${widget.surah['surath_no']}. ${widget.surah['en_surath_name']}',
-              style: CustomFontStyle().common(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18.sp,
-                  color: AppColors.textBlack),
-            ),
-          ],
+        title: InkWell(
+          onTap: () {
+            switchAya(
+              onAyaSelected: (index) {
+                print('index is--$index');
+                _scrollToAyath(index); // Scroll to the selected Ayah
+              },
+              context: context,
+              name: widget.surah['en_surath_name'],
+            );
+          },
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '${widget.surah['surath_no']}. ${widget.surah['en_surath_name']} ',
+                style: CustomFontStyle().common(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18.sp,
+                    color: AppColors.textBlack),
+              ),
+              Icon(Icons.arrow_drop_down)
+            ],
+          ),
         ),
         actions: [
           Image.asset(
@@ -145,7 +168,7 @@ class _SurahDetailsScreenState extends State<SurahDetailsScreen> {
                                 borderColor: AppColors.secondaryGreen,
                                 bgColor: AppColors.secondaryGreen,
                                 text: 'Play Surah',
-                                onPress: () {},
+                                onPress: () async {},
                                 rightIcon: Expanded(
                                     child: Icon(
                                   Icons.play_arrow_rounded,
@@ -155,60 +178,52 @@ class _SurahDetailsScreenState extends State<SurahDetailsScreen> {
                             ],
                           ),
                         ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                'Translation Language',
-                                style: CustomFontStyle().common(
-                                  color: AppColors.textBlack.withOpacity(0.6),
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: 130.w, // Set width of the dropdown
-                              height: 50, // Adjust the height as needed
-                              padding: EdgeInsets.symmetric(horizontal: 5),
-                              child: DropdownButtonHideUnderline(
-                                child: SizedBox(
-                                  height: 50,
-                                  child: DropdownButton<String>(
-                                    value: data.selectedLanguage,
-                                    onChanged: (String? newValue) {
-                                      data.switchLanguage(
-                                          value: newValue,
-                                          id: widget.surathId!);
-                                    },
-                                    items: <String>['English', 'malayalam']
-                                        .map<DropdownMenuItem<String>>(
-                                            (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: SizedBox(
-                                          width: double
-                                              .infinity, // Ensures full width
-                                          child: Text(
-                                            value,
-                                            style: CustomFontStyle().common(
-                                              color: AppColors.textBlack,
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.w600,
-                                            ), // Adjust text size
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    isExpanded:
-                                        true, // Ensures dropdown expands within container
-                                    dropdownColor: Colors
-                                        .white, // Adjust dropdown color if needed
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Translation Language',
+                                  style: CustomFontStyle().common(
+                                    color: AppColors.textBlack.withOpacity(0.6),
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                              InkWell(
+                                onTap: () {
+                                  changeTraslation(
+                                      selectedTranslator:
+                                          data.selectedTranslator,
+                                      context: context,
+                                      translator: data.translator,
+                                      onTap: (va) {
+                                        data.selectTranslator(
+                                            value: va,
+                                            surathId: widget.surathId);
+                                      });
+                                },
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      '${data.selectedTranslator?.language} ',
+                                      overflow: TextOverflow.fade,
+                                      maxLines: 1,
+                                      style: CustomFontStyle().common(
+                                        color: AppColors.textBlack,
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Icon(Icons.arrow_drop_down)
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -241,11 +256,16 @@ class _SurahDetailsScreenState extends State<SurahDetailsScreen> {
                   ),
                   Expanded(
                     child: ListView.separated(
-                        controller: _scrollController,
+                        controller: controller,
                         padding: EdgeInsets.all(16),
                         itemBuilder: (context, index) {
-                          return AyatTile(
-                            ayath: data.surahDetails![index],
+                          return AutoScrollTag(
+                            key: ValueKey(index),
+                            controller: controller!,
+                            index: index,
+                            child: AyatTile(
+                              ayath: data.surahDetails![index],
+                            ),
                           );
                         },
                         separatorBuilder: (context, index) => SizedBox(

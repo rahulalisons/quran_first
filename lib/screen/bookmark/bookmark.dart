@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:quran_first/screen/bookmark/widget/bookmark_tile.dart';
+import 'package:quran_first/screen/bookmark/widget/empty_bookmark.dart';
 import '../../controller/db_provider.dart';
 import '../../core/values/colors.dart';
+import '../../core/values/strings.dart';
 import '../common_widgets/custom_textstyle.dart';
 
 class Bookmark extends StatelessWidget {
@@ -34,7 +36,11 @@ class Bookmark extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 )
               : (book.bookmarkedAyath?.length ?? 0) > 0
-                  ? ListView.separated(
+                  ?
+                  // (book.bookmarkedAyath!
+                  //                 .every((surha) => surha.bookmarks.isNotEmpty))
+                  //             ?
+                  ListView.separated(
                       padding: EdgeInsets.all(16),
                       itemBuilder: (context, index) {
                         var data = book.bookmarkedAyath![index];
@@ -107,7 +113,8 @@ class Bookmark extends StatelessWidget {
                             height: 10,
                           ),
                       itemCount: book.bookmarkedAyath?.length ?? 0)
-                  : Center(child: Text("No bookmarked ayaths found."));
+                  : EmptyBookmark();
+          // : EmptyBookmark();
         }));
   }
 }

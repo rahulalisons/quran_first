@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:quran_first/controller/quran_provider.dart';
 import 'package:quran_first/screen/home/widgets/reandom_ayath.dart';
@@ -10,8 +11,10 @@ import '../../controller/db_provider.dart';
 import '../../core/values/colors.dart';
 import '../../core/values/strings.dart';
 import '../bookmark/bookmark.dart';
+import '../bottom_bar/bottom_bar_section.dart';
 import '../common_widgets/custom_textstyle.dart';
 import '../find_qibla/find_qibla.dart';
+import '../settings/settings.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -38,6 +41,15 @@ class HomeScreen extends StatelessWidget {
         actions: [
           InkWell(
             onTap: () {
+              // Navigator.push(
+              //   context,
+              //   PageTransition(
+              //     type: PageTransitionType.sharedAxisHorizontal,
+              //     duration: Duration(milliseconds: 500),
+              //     child: Settings(),
+              //   ),
+              //       // (Route<dynamic> route) => false,
+              // );
               context.read<QuranProvider>().bottomnaviagtionSwitch(3);
             },
             child: Image.asset(
@@ -225,12 +237,14 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                icon ?? 'assets/app/images/home_quran.png',
-                width: 60.w,
-                height: 60.w,
+              Expanded(
+                child: Image.asset(
+                  icon ?? 'assets/app/images/home_quran.png',
+                  width: 60.w,
+                  height: 60.w,
+                ),
               ),
-              SizedBox(height: 5.h),
+
               Text(
                 title ?? 'Read Quran',
                 style: CustomFontStyle().common(
@@ -239,6 +253,7 @@ class HomeScreen extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
+              SizedBox(height: 15.h),
             ],
           ),
         ),

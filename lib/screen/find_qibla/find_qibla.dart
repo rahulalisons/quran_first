@@ -95,7 +95,7 @@ class _FindQiblaState extends State<FindQibla> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor: Color(0xFF07170D),
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         leading: InkWell(

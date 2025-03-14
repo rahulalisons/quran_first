@@ -2,7 +2,7 @@ class SurahBookmarks {
   final int surahNo;
   final String surahName;
   final int bookmarkCount;
-   List<Bookmark> bookmarks;
+  List<Bookmark> bookmarks;
 
   SurahBookmarks({
     required this.surahNo,

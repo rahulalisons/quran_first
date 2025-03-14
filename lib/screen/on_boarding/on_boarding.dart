@@ -3,11 +3,14 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:quran_first/core/values/colors.dart';
 import 'package:quran_first/screen/on_boarding/widgets/on_boarding_text.dart';
 import '../../controller/db_provider.dart';
 import '../../controller/quran_provider.dart';
+import '../../core/utils/helper/shared_preference.dart';
+import '../../core/values/constants.dart';
 import '../../core/values/strings.dart';
 import '../bottom_bar/bottom_bar_section.dart';
 import '../common_widgets/custom_button.dart';
@@ -25,16 +28,17 @@ class _OnBoardingState extends State<OnBoarding> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<DbProvider>().fetchRandomAyath();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   context.read<DbProvider>().fetchRandomAyath();
+    // });
   }
+
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<QuranProvider>(context, listen: false)
-          .currentLocation(context);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   Provider.of<QuranProvider>(context, listen: false)
+    //       .currentLocation(context);
+    // });
     return Scaffold(
       body: Container(
         height: ScreenUtil().screenHeight,
@@ -105,12 +109,18 @@ class _OnBoardingState extends State<OnBoarding> {
                     ? Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: CustomButton(
-                          onPress: () {
+                          onPress: () async {
+                            await SharedPrefUtil.writeBoolean(
+                                keyIsFirstTime, false);
+
                             Navigator.pushAndRemoveUntil(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => BottomBarSection()),
-                              (Route<dynamic> route) => false,
+                              PageTransition(
+                                type: PageTransitionType.sharedAxisHorizontal,
+                                duration: Duration(milliseconds: 500),
+                                child: BottomBarSection(),
+                              ),
+                                  (Route<dynamic> route) => false,
                             );
                           },
                           bgColor: Color(0XFF336846),
