@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../core/db_helper/db_helper.dart';
 import '../models/bookmark_model.dart';
+import '../models/translator_model.dart';
 
 class DbProvider with ChangeNotifier {
   final DBHelper dbHelper = DBHelper();
@@ -26,19 +27,16 @@ class DbProvider with ChangeNotifier {
 
   List<Map<String, dynamic>>? surahDetails;
   bool isLoading = false;
-  void getSurahDetail(int surahNo,
-      {String? key, bool needLoader = true}) async {
+  Future getSurahDetail(
+    int surahNo, {
+    bool needLoader = true,
+  }) async {
     isLoading = needLoader;
-    surahDetails = await dbHelper.getSurahDetails(surahNo, key: key);
+    surahDetails = await dbHelper.getSurahDetails(surahNo,
+        key: selectedTranslator?.language.toLowerCase(),
+        translatorId: selectedTranslator?.id);
+    log('re------$surahDetails');
     isLoading = false;
-    notifyListeners();
-  }
-
-  String selectedLanguage = 'English';
-  switchLanguage({String? value, int? id}) {
-    print(value);
-    getSurahDetail(id!, key: value, needLoader: false);
-    selectedLanguage = value!;
     notifyListeners();
   }
 
@@ -52,25 +50,15 @@ class DbProvider with ChangeNotifier {
     return isAdded;
   }
 
-  // List<Map<String, dynamic>>? bookmarkedAyath;
-  //
-  // Future<List<Map<String, dynamic>>>? _bookmarkedList;
-  // Future<List<Map<String, dynamic>>>? get bookmarkedList => _bookmarkedList;
-  //
-  // void getBookmarkedAyat() async {
-  //   _bookmarkedList = dbHelper.getBookmarkedAyaths();
-  // }
-
   void clearBookMark() async {
     await dbHelper.clearBookmarks();
   }
 
   Future<bool> removeBookMark({int? surahNo, int? ayathNo}) async {
     bool? isDeleted =
-    await dbHelper.removeBookmark(surahNo: surahNo, ayathNo: ayathNo);
+        await dbHelper.removeBookmark(surahNo: surahNo, ayathNo: ayathNo);
     return isDeleted;
   }
-
 
   List<SurahBookmarks>? bookmarkedAyath;
   bool? isLoadingBk = false;
@@ -87,5 +75,25 @@ class DbProvider with ChangeNotifier {
     selectedAyath.bookmarks
         .removeWhere((e) => e.ayahNo == bookmarkAyath?.ayahNo);
     notifyListeners();
+  }
+
+  List<Translator>? translator;
+  Translator? selectedTranslator ;
+
+  void fetchTranslator() async {
+    translator = await dbHelper.fetchTranslators();
+    notifyListeners();
+  }
+
+  selectTranslator({
+    Translator? value,
+    int? surathId,
+  }) {
+    selectedTranslator = value;
+    getSurahDetail(
+      needLoader: false,
+      surathId!,
+    );
+    // notifyListeners();
   }
 }

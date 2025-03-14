@@ -13,12 +13,11 @@ Future dialogBox(
           insetPadding: const EdgeInsets.symmetric(horizontal: 16),
           surfaceTintColor: Colors.transparent,
           backgroundColor: Colors.white,
+          contentPadding: EdgeInsets.zero,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: title ?? const SizedBox(),
-          titlePadding: title != null
-              ? const EdgeInsets.only(top: 24, right: 24, left: 24)
-              : EdgeInsets.zero,
+          titlePadding:  EdgeInsets.zero,
           content: content ??
               const Text(
                 'A dialog is a type of modal window that\n'

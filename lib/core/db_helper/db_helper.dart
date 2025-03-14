@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../models/bookmark_model.dart';
+import '../../models/translator_model.dart';
 
 class DBHelper {
   static Database? _database;
@@ -53,7 +54,6 @@ class DBHelper {
   ''');
   }
 
-
   Future<List<Map<String, dynamic>>> getAllSurah({String? searchQuery}) async {
     final db = await database;
 
@@ -85,9 +85,68 @@ class DBHelper {
     }
   }
 
+  // Future<List<Map<String, dynamic>>> getSurahDetails(int surahNo,
+  //     {String? key}) async {
+  //   final db = await database;
+  //   return await db.rawQuery('''
+  // SELECT
+  //     ar_surath.surath_no,
+  //     ar_surath.surath_name AS arabic_surath_name,
+  //     en_surath.surath_name AS english_surath_name,
+  //     (SELECT COUNT(*) FROM ar_ayath WHERE ar_ayath.surath_no = ar_surath.surath_no) AS ayath_count,
+  //     ar_ayath.ayath_no,
+  //     ar_ayath.ayath AS arabic_ayath,
+  //
+  //     en_ayath_3.ayath AS english_ayath_translator_3,
+  //
+  //     CASE
+  //         WHEN ? = 'english' THEN en_ayath_1.ayath
+  //         ELSE NULL
+  //     END AS english_ayath_translator_1,
+  //
+  //     CASE
+  //         WHEN ? = 'malayalam' THEN ma_ayath_1.ayath
+  //         ELSE NULL
+  //     END AS malayalam_ayath_translator_1,
+  //
+  //     -- Check if the ayath exists in the bookmark table and return true/false
+  //     CASE
+  //         WHEN EXISTS (
+  //             SELECT 1 FROM bookmark
+  //             WHERE bookmark.surath_no = ar_ayath.surath_no
+  //             AND bookmark.ayath_no = ar_ayath.ayath_no
+  //         ) THEN 'true'
+  //         ELSE 'false'
+  //     END AS is_bookmarked
+  //
+  // FROM ar_surath
+  // JOIN en_surath ON ar_surath.surath_no = en_surath.surath_no
+  // JOIN ar_ayath ON ar_surath.surath_no = ar_ayath.surath_no
+  // LEFT JOIN en_ayath AS en_ayath_3
+  //     ON ar_ayath.surath_no = en_ayath_3.surath_no
+  //     AND ar_ayath.ayath_no = en_ayath_3.ayath_no
+  //     AND en_ayath_3.translator_id = 3
+  // LEFT JOIN en_ayath AS en_ayath_1
+  //     ON ar_ayath.surath_no = en_ayath_1.surath_no
+  //     AND ar_ayath.ayath_no = en_ayath_1.ayath_no
+  //     AND en_ayath_1.translator_id = 1
+  // LEFT JOIN ma_ayath AS ma_ayath_1
+  //     ON ar_ayath.surath_no = ma_ayath_1.surath_no
+  //     AND ar_ayath.ayath_no = ma_ayath_1.ayath_no
+  //     AND ma_ayath_1.translator_id = 1
+  // WHERE ar_surath.surath_no = ?
+  // ORDER BY ar_ayath.ayath_no;
+  // ''', [key, key, surahNo]);
+  // }
+
   Future<List<Map<String, dynamic>>> getSurahDetails(int surahNo,
-      {String? key}) async {
+      {String? key, int? translatorId}) async {
     final db = await database;
+    print('key iss---$key-----id is----$translatorId');
+
+    key ??= 'english';
+    translatorId ??= 1;
+
     return await db.rawQuery('''
   SELECT 
       ar_surath.surath_no,
@@ -96,16 +155,26 @@ class DBHelper {
       (SELECT COUNT(*) FROM ar_ayath WHERE ar_ayath.surath_no = ar_surath.surath_no) AS ayath_count,
       ar_ayath.ayath_no,
       ar_ayath.ayath AS arabic_ayath,
-      
+
+      -- Static English Translator 3 (Does not change based on key)
       en_ayath_3.ayath AS english_ayath_translator_3,
 
+      -- Dynamically fetch based on key and translatorId
       CASE 
-          WHEN ? = 'english' THEN en_ayath_1.ayath 
+          WHEN ? = 'english' THEN 
+              (SELECT ayath FROM en_ayath 
+               WHERE en_ayath.surath_no = ar_ayath.surath_no 
+               AND en_ayath.ayath_no = ar_ayath.ayath_no 
+               AND en_ayath.translator_id = ?)
           ELSE NULL 
       END AS english_ayath_translator_1,
-      
+
       CASE 
-          WHEN ? = 'malayalam' THEN ma_ayath_1.ayath 
+          WHEN ? = 'malayalam' THEN 
+              (SELECT ayath FROM ma_ayath 
+               WHERE ma_ayath.surath_no = ar_ayath.surath_no 
+               AND ma_ayath.ayath_no = ar_ayath.ayath_no 
+               AND ma_ayath.translator_id = ?)
           ELSE NULL 
       END AS malayalam_ayath_translator_1,
 
@@ -122,21 +191,16 @@ class DBHelper {
   FROM ar_surath
   JOIN en_surath ON ar_surath.surath_no = en_surath.surath_no
   JOIN ar_ayath ON ar_surath.surath_no = ar_ayath.surath_no
+
+  -- Keep translator 3 query separate (remains unchanged)
   LEFT JOIN en_ayath AS en_ayath_3 
       ON ar_ayath.surath_no = en_ayath_3.surath_no 
       AND ar_ayath.ayath_no = en_ayath_3.ayath_no 
       AND en_ayath_3.translator_id = 3
-  LEFT JOIN en_ayath AS en_ayath_1
-      ON ar_ayath.surath_no = en_ayath_1.surath_no
-      AND ar_ayath.ayath_no = en_ayath_1.ayath_no
-      AND en_ayath_1.translator_id = 1
-  LEFT JOIN ma_ayath AS ma_ayath_1
-      ON ar_ayath.surath_no = ma_ayath_1.surath_no
-      AND ar_ayath.ayath_no = ma_ayath_1.ayath_no
-      AND ma_ayath_1.translator_id = 1
+
   WHERE ar_surath.surath_no = ?
   ORDER BY ar_ayath.ayath_no;
-  ''', [key, key, surahNo]);
+  ''', [key, translatorId, key, translatorId, surahNo]);
   }
 
   Future<bool> addBookmark(
@@ -147,8 +211,6 @@ class DBHelper {
         [surahNo, ayathNo, ayath, translation]);
     return rowsAffected > 0;
   }
-
-
 
   Future<bool> removeBookmark({int? surahNo, int? ayathNo}) async {
     final db = await database; // Get database instance
@@ -166,7 +228,6 @@ class DBHelper {
     final db = await database;
     await db.rawDelete('DELETE FROM bookmark;');
   }
-
 
   //  test
   Future<List<SurahBookmarks>> getBookmark() async {
@@ -210,6 +271,19 @@ class DBHelper {
     return surahMap.values.toList();
   }
 
+  Future<List<Translator>> fetchTranslators() async {
+    final db = await database;
 
+    String query = """
+      SELECT 'English' AS language, id, translator_name FROM en_translator WHERE id != 3
+      UNION ALL
+      SELECT 'Malayalam' AS language, id, translator_name FROM ma_translator;
+    """;
+    List<Map<String, dynamic>> results = await db.rawQuery(query);
 
+    List<Translator> translators =
+        results.map((row) => Translator.fromMap(row)).toList();
+
+    return translators;
+  }
 }

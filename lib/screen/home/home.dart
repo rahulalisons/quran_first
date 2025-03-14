@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:quran_first/controller/quran_provider.dart';
 import 'package:quran_first/screen/home/widgets/reandom_ayath.dart';
@@ -10,8 +11,10 @@ import '../../controller/db_provider.dart';
 import '../../core/values/colors.dart';
 import '../../core/values/strings.dart';
 import '../bookmark/bookmark.dart';
+import '../bottom_bar/bottom_bar_section.dart';
 import '../common_widgets/custom_textstyle.dart';
 import '../find_qibla/find_qibla.dart';
+import '../settings/settings.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
