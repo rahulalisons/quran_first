@@ -89,7 +89,8 @@ class _FindQiblaState extends State<FindQibla> {
     context.read<QuranProvider>().fetchCurrentLocation(
         longitude: position.longitude, latitude: position.latitude);
 
-    return await Geolocator.getCurrentPosition();
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
   }
 
   @override
@@ -199,7 +200,6 @@ class _FindQiblaState extends State<FindQibla> {
                   if (snapshot.hasError) {
                     return Text('Error reading heading: ${snapshot.error}');
                   }
-
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
                       child: CircularProgressIndicator(color: Colors.red),

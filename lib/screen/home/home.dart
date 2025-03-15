@@ -19,7 +19,6 @@ import '../settings/settings.dart';
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     var ctrl = Provider.of<QuranProvider>(context);
     var size = MediaQuery.of(context).size;
     HijriCalendar.setLocal('en');
@@ -138,10 +137,7 @@ class HomeScreen extends StatelessWidget {
                       }),
                     ],
                   ),
-                  Positioned(
-                    top: size.height / 4.1,
-                    child: ReandomAyath()
-                  ),
+                  Positioned(top: size.height / 4.1, child: ReandomAyath()),
                 ],
               ),
             ),
@@ -196,8 +192,11 @@ class HomeScreen extends StatelessWidget {
                           ),
                           buildGridItem(
                               onTap: () {
-
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => Bookmark(),));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Bookmark(),
+                                    ));
                               },
                               title: 'Bookmarks',
                               icon: 'assets/app/images/home_bookmark.png')
@@ -219,7 +218,7 @@ class HomeScreen extends StatelessWidget {
 
   String getSystemTime() {
     var now = DateTime.now();
-    return DateFormat("h:mm a").format(now); // 12-hour format with AM/PM
+    return DateFormat("h:mm a").format(now);
   }
 
   Widget buildGridItem({String? icon, String? title, void Function()? onTap}) {
@@ -244,7 +243,6 @@ class HomeScreen extends StatelessWidget {
                   height: 60.w,
                 ),
               ),
-
               Text(
                 title ?? 'Read Quran',
                 style: CustomFontStyle().common(
