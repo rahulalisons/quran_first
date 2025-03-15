@@ -6,6 +6,7 @@ void bottomSheet(
     bool? isDismissible,
     bool enableDrag = true}) {
   showModalBottomSheet(
+    showDragHandle: true,
     enableDrag: enableDrag,
     isDismissible: isDismissible ?? true,
     backgroundColor: Colors.white,

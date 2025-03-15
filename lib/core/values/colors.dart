@@ -18,4 +18,5 @@ class AppColors {
   static const Color oneToOneUpComing = Color(0xFF999999);
   static const Color orange = Color(0xFFEB9F31);
   static const Color shareBColor = Color(0xFF4D8F63);
+  static const Color checkGreen = Color(0xFF00E32A);
 }

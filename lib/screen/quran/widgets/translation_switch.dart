@@ -10,24 +10,42 @@ class TranslationSwitch extends StatelessWidget {
   bool switchOnOff;
   final String? title;
   final void Function(bool)? onTap;
+  final bool? isFomSettings;
   TranslationSwitch(
-      {super.key, this.title, this.onTap, required this.switchOnOff});
+      {super.key,
+      this.title,
+      this.onTap,
+      required this.switchOnOff,
+      this.isFomSettings = false});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(
-        title??  'Transliteration',
-          style: CustomFontStyle().common(
-            color: AppColors.textBlack.withOpacity(0.6),
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        isFomSettings != true
+            ? Text(
+                title ?? 'Transliteration',
+                style: CustomFontStyle().common(
+                  color: isFomSettings != true
+                      ? AppColors.textBlack.withOpacity(0.6)
+                      : AppColors.textBlack,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+            : Expanded(
+                child: Text(title ?? 'Transliteration',
+                    style: CustomFontStyle().common(
+                      color: isFomSettings != true
+                          ? AppColors.textBlack.withOpacity(0.6)
+                          : AppColors.textBlack,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                    ))),
         SizedBox(
           width: 10,
         ),
+
         InkWell(
           onTap: () {
             onTap!(switchOnOff = !switchOnOff);

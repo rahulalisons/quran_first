@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:quran_first/models/arbic_script_model.dart';
 
 import '../core/utils/helper/custom_dialog.dart';
 import '../core/utils/helper/shared_preference.dart';
@@ -65,7 +66,6 @@ class QuranProvider with ChangeNotifier {
             ),
             (Route<dynamic> route) => false,
           );
-
         }
       } else {
         Navigator.pushAndRemoveUntil(
@@ -75,7 +75,7 @@ class QuranProvider with ChangeNotifier {
             duration: Duration(milliseconds: 500),
             child: OnBoarding(),
           ),
-              (Route<dynamic> route) => false,
+          (Route<dynamic> route) => false,
         );
       }
     });
@@ -170,6 +170,30 @@ class QuranProvider with ChangeNotifier {
     double? longitude,
   }) async {
     currentLocations = await placemarkFromCoordinates(latitude!, longitude!);
+    notifyListeners();
+  }
+
+  List<ArabicScript> arabicType = [
+    ArabicScript(
+        id: 1,
+        displayName: 'IndoPak (Majeedi)',
+        fontName: 'AlQuran-IndoPak-by-QuranWBW'),
+    ArabicScript(
+        id: 2,
+        fontName: 'UthmanicHafs1Ver09',
+        displayName: 'Madinah (Uthmani)'),
+    ArabicScript(id: 3, displayName: 'Reem KufiScript', fontName: 'ReemKufi'),
+    ArabicScript(
+        id: 4, displayName: 'Noto Kufic Script', fontName: 'NotoKufiArabic'),
+  ];
+
+  ArabicScript? defaultType = ArabicScript(
+      id: 1,
+      displayName: 'IndoPak (Majeedi)',
+      fontName: 'AlQuran-IndoPak-by-QuranWBW');
+
+  changeScript(ArabicScript value) {
+    defaultType = value;
     notifyListeners();
   }
 }

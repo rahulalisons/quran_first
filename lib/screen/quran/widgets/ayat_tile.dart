@@ -6,6 +6,7 @@ import 'package:quran_first/controller/db_provider.dart';
 import 'package:quran_first/controller/quran_provider.dart';
 
 import '../../../core/values/colors.dart';
+import '../../../models/arbic_script_model.dart';
 import '../../common_widgets/custom_textstyle.dart';
 import '../../share_screen.dart';
 
@@ -30,6 +31,7 @@ class _AyatTileState extends State<AyatTile> {
   Widget build(BuildContext context) {
     bool transliteration = context.watch<QuranProvider>().showTransliteration!;
     bool translation = context.watch<QuranProvider>().showTranslation!;
+    ArabicScript script = context.watch<QuranProvider>().defaultType!;
 
     return Container(
       decoration: BoxDecoration(
@@ -44,6 +46,12 @@ class _AyatTileState extends State<AyatTile> {
             child: ayathText(
               textAlign: TextAlign.end,
               text: '${widget.ayath['arabic_ayath']}',
+              style: CustomFontStyle().common(
+                color: AppColors.textBlack,
+                fontSize: 15.sp,
+                fontFamily: script.fontName,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
           transliteration == true
@@ -165,20 +173,17 @@ class _AyatTileState extends State<AyatTile> {
   }
 }
 
-Widget ayathText({
-  String? text,
-  TextAlign? textAlign,
-  TextStyle? style
-}) {
+Widget ayathText({String? text, TextAlign? textAlign, TextStyle? style}) {
   return Consumer<QuranProvider>(builder: (context, size, _) {
     return Text(
       textAlign: textAlign ?? TextAlign.start,
       text ?? 'In the Name of Allah, Most Gracious,Most Merciful.',
-      style:style?? CustomFontStyle().common(
-        color: AppColors.textBlack,
-        fontSize: size.ayatTextSize ?? 15.sp,
-        fontWeight: FontWeight.w500,
-      ),
+      style: style ??
+          CustomFontStyle().common(
+            color: AppColors.textBlack,
+            fontSize: size.ayatTextSize ?? 15.sp,
+            fontWeight: FontWeight.w500,
+          ),
     );
   });
 }
