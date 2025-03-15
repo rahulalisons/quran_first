@@ -23,7 +23,7 @@ class SurahList extends StatelessWidget {
 
         final surahList = snapshot.data!;
         return ListView.separated(
-          padding: EdgeInsets.symmetric(vertical: 15.h),
+          padding: EdgeInsets.symmetric(vertical: 5.h),
           separatorBuilder: (context, index) => SizedBox(height: 13.h),
           itemCount: surahList.length,
           itemBuilder: (context, index) {
