@@ -61,17 +61,17 @@ class QuranScreen extends StatelessWidget {
                   borderSide: BorderSide(color: AppColors.transparent)),
               hintText: '   Search by Surah Name, Number or Verse',
             ),
-            Consumer<QuranProvider>(builder: (context, data, _) {
-              return CustomSwitch(
-                  selectIndex: data.juzOrSurah,
-                  onTap: (va) {
-                    data.switchIndex(va);
-                  },
-                  names: ['Surah', 'Juz']);
-            }),
-            SizedBox(
-              height: 5,
-            ),
+            // Consumer<QuranProvider>(builder: (context, data, _) {
+            //   return CustomSwitch(
+            //       selectIndex: data.juzOrSurah,
+            //       onTap: (va) {
+            //         data.switchIndex(va);
+            //       },
+            //       names: ['Surah', 'Juz']);
+            // }),
+            // SizedBox(
+            //   height: 5,
+            // ),
             Consumer<QuranProvider>(builder: (context, data, _) {
               return Expanded(
                   child: Visibility(
