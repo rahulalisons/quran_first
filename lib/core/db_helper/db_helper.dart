@@ -142,7 +142,6 @@ class DBHelper {
   Future<List<Map<String, dynamic>>> getSurahDetails(int surahNo,
       {String? key, int? translatorId}) async {
     final db = await database;
-    print('key iss---$key-----id is----$translatorId');
 
     key ??= 'english';
     translatorId ??= 1;
@@ -186,7 +185,11 @@ class DBHelper {
               AND bookmark.ayath_no = ar_ayath.ayath_no
           ) THEN 'true'
           ELSE 'false'
-      END AS is_bookmarked
+      END AS is_bookmarked,
+
+      -- Fetch Juzh details
+      juzh.juzh_no,
+      juzh.ayath_no AS juzh_ayath_no
 
   FROM ar_surath
   JOIN en_surath ON ar_surath.surath_no = en_surath.surath_no
@@ -198,10 +201,16 @@ class DBHelper {
       AND ar_ayath.ayath_no = en_ayath_3.ayath_no 
       AND en_ayath_3.translator_id = 3
 
+  -- Join with juzh table to get juzh_no
+  LEFT JOIN juzh 
+      ON ar_ayath.surath_no = juzh.surath_no 
+      AND ar_ayath.ayath_no = juzh.ayath_no
+
   WHERE ar_surath.surath_no = ?
   ORDER BY ar_ayath.ayath_no;
   ''', [key, translatorId, key, translatorId, surahNo]);
   }
+
 
   Future<bool> addBookmark(
       {int? surahNo, int? ayathNo, String? ayath, String? translation}) async {
