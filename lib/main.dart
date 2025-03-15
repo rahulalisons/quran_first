@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
           ),
           // home: const OnBoarding(),
-          home: const SplashScreen(),
+          home:  SplashScreen(),
         ),
       ),
     );

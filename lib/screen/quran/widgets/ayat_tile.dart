@@ -7,6 +7,7 @@ import 'package:quran_first/controller/quran_provider.dart';
 
 import '../../../core/values/colors.dart';
 import '../../common_widgets/custom_textstyle.dart';
+import '../../share_screen.dart';
 
 class AyatTile extends StatefulWidget {
   final ayath;
@@ -41,6 +42,7 @@ class _AyatTileState extends State<AyatTile> {
           Align(
             alignment: Alignment.topRight,
             child: ayathText(
+              textAlign: TextAlign.end,
               text: '${widget.ayath['arabic_ayath']}',
             ),
           ),
@@ -89,8 +91,7 @@ class _AyatTileState extends State<AyatTile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${widget.ayath['ayath_no']}',
-
+                '${widget.ayath['ayath_no']}}',
                 style: CustomFontStyle().common(
                   color: AppColors.textBlack.withOpacity(.25),
                   fontSize: 16.sp,
@@ -145,7 +146,17 @@ class _AyatTileState extends State<AyatTile> {
                             },
                           );
                         }),
-              buttonIcon(icons: Icon(Icons.share), onTap: () {}),
+              buttonIcon(
+                  icons: Icon(Icons.share),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ShareScreen(
+                            ayath: widget.ayath,
+                          ),
+                        ));
+                  }),
             ],
           )
         ],
@@ -157,12 +168,13 @@ class _AyatTileState extends State<AyatTile> {
 Widget ayathText({
   String? text,
   TextAlign? textAlign,
+  TextStyle? style
 }) {
   return Consumer<QuranProvider>(builder: (context, size, _) {
     return Text(
       textAlign: textAlign ?? TextAlign.start,
       text ?? 'In the Name of Allah, Most Gracious,Most Merciful.',
-      style: CustomFontStyle().common(
+      style:style?? CustomFontStyle().common(
         color: AppColors.textBlack,
         fontSize: size.ayatTextSize ?? 15.sp,
         fontWeight: FontWeight.w500,

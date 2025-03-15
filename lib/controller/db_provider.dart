@@ -1,7 +1,11 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../core/db_helper/db_helper.dart';
 import '../models/bookmark_model.dart';
@@ -78,7 +82,7 @@ class DbProvider with ChangeNotifier {
   }
 
   List<Translator>? translator;
-  Translator? selectedTranslator ;
+  Translator? selectedTranslator;
 
   void fetchTranslator() async {
     translator = await dbHelper.fetchTranslators();
@@ -95,5 +99,26 @@ class DbProvider with ChangeNotifier {
       surathId!,
     );
     // notifyListeners();
+  }
+
+  bool isSharing = false;
+  ScreenshotController screenshotController = ScreenshotController();
+  Future<void> captureAndShare() async {
+    isSharing = true;
+    notifyListeners();
+    await Future.delayed(Duration(milliseconds: 100));
+
+    screenshotController.capture().then((image) async {
+    isSharing = false;
+    notifyListeners();
+      if (image != null) {
+        final directory = await getTemporaryDirectory();
+        final imagePath = '${directory.path}/ayat.png';
+        File(imagePath).writeAsBytesSync(image);
+
+        await Share.shareXFiles([XFile(imagePath)],
+            text: "Here is an Ayat for you!");
+      }
+    });
   }
 }

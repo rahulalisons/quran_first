@@ -17,4 +17,5 @@ class AppColors {
   static const Color appBarColor = Color(0xFFEAF6E9);
   static const Color oneToOneUpComing = Color(0xFF999999);
   static const Color orange = Color(0xFFEB9F31);
+  static const Color shareBColor = Color(0xFF4D8F63);
 }
