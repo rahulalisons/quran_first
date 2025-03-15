@@ -87,13 +87,13 @@ class QuranProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  double? ayatTextSize = 15.sp;
+  // double? ayatTextSize = 15.sp;
 
-  changeTextSize({double? size}) {
-    ayatTextSize = size;
-    print('size iss---$ayatTextSize');
-    notifyListeners();
-  }
+  // changeTextSize({double? size}) {
+  //   ayatTextSize = size;
+  //   print('size iss---$ayatTextSize');
+  //   notifyListeners();
+  // }
 
   bool? showTranslation = true;
   bool? showTransliteration = true;
@@ -194,6 +194,20 @@ class QuranProvider with ChangeNotifier {
 
   changeScript(ArabicScript value) {
     defaultType = value;
+    notifyListeners();
+  }
+
+  List<ArabicScript> fontSize = [
+    ArabicScript(id: 1, displayName: 'Small', size: 12),
+    ArabicScript(id: 2, displayName: 'Medium', size: 15),
+    ArabicScript(id: 3, displayName: 'Large', size: 17),
+    ArabicScript(id: 4, displayName: 'Extra Large', size: 19),
+  ];
+  ArabicScript? defaultFontSize =
+      ArabicScript(id: 2, displayName: 'Medium', size: 15);
+
+  changeFontSize(ArabicScript value) {
+    defaultFontSize = value;
     notifyListeners();
   }
 }

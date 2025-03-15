@@ -9,7 +9,9 @@ class ImageStrings {
   ///test
   static const String test = '${AppConstants.imagePath}test11.png';
   static const String logo = '${AppConstants.imagePath}logo.png';
+  static const String prayerComingSoon = '${AppConstants.imagePath}prayer_comingsoon.png';
   static const String faceBook = '${AppConstants.imagePath}facebook.png';
+  static const String ayathCircle = '${AppConstants.imagePath}ayath_circel.png';
   static const String linkedIn = '${AppConstants.imagePath}linkedIn.png';
   static const String instagram = '${AppConstants.imagePath}instagarm.png';
   static const String twitter = '${AppConstants.imagePath}twitter.png';

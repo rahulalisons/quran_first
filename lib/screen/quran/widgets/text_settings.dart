@@ -110,7 +110,67 @@ class TextSettings extends StatelessWidget {
           ),
           TransliterationTranslation(
             isFromSettings: true,
-          )
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              'Font Size',
+              style: CustomFontStyle().common(
+                color: AppColors.black,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: 44.h,
+            child: ListView.separated(
+              physics: ClampingScrollPhysics(),
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  var data = settings.fontSize[index];
+                  return InkWell(
+                    onTap: (){
+                      settings.changeFontSize(data);
+                    },
+                    child: Container(
+
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: settings.defaultFontSize?.id == data.id
+                              ? AppColors.orange
+                              : AppColors.lightGray),
+                      constraints: BoxConstraints(maxWidth: 80.w),
+                      child: Text(
+                        '${data.displayName}',
+                        style: CustomFontStyle().common(
+                          color: settings.defaultFontSize?.id == data.id
+                              ? AppColors.white
+                              : AppColors.textBlack.withOpacity(0.7),
+                          fontSize: settings.defaultFontSize?.id == data.id
+                              ? 14.sp
+                              : 13.sp,
+                          fontWeight: settings.defaultFontSize?.id == data.id
+                              ? FontWeight.w600
+                              : FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                separatorBuilder: (context, index) => SizedBox(
+                      width: 10,
+                    ),
+                itemCount: settings.fontSize.length),
+          ),
+          SizedBox(
+            height: 30,
+          ),
         ],
       );
     });

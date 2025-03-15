@@ -56,6 +56,7 @@ class Settings extends StatelessWidget {
                 image: ImageStrings.shareApp,
               ),
               SettingsTile(
+                image: ImageStrings.appVersion,
                 title: 'App Version ',
                 action: Text(
                   'v 1.0.0',

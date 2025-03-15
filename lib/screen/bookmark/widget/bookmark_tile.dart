@@ -6,6 +6,7 @@ import 'package:quran_first/screen/quran/widgets/ayat_tile.dart';
 
 import '../../../controller/db_provider.dart';
 import '../../../core/values/colors.dart';
+import '../../../core/values/strings.dart';
 import '../../../models/bookmark_model.dart';
 import '../../common_widgets/custom_textstyle.dart';
 import '../../quran/surah_details_screen.dart';
@@ -21,15 +22,15 @@ class BookmarkTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //       builder: (context) => SurahDetailsScreen(
-        //         surathId: surahNo,
-        //         ayathNumber: bookmarkAyath.ayahNo,
-        //         surah: {'surath_no': surahNo, "en_surath_name": surahName},
-        //       ),
-        //     ));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SurahDetailsScreen(
+                surathId: surahNo,
+                ayathNumber: bookmarkAyath.ayahNo,
+                surah: {'surath_no': surahNo, "en_surath_name": surahName},
+              ),
+            ));
       },
       child: Container(
         decoration: BoxDecoration(
@@ -43,7 +44,14 @@ class BookmarkTile extends StatelessWidget {
           children: [
             Align(
               alignment: Alignment.topRight,
-              child: ayathText(text: bookmarkAyath.ayah),
+              child: ayathText(
+                  text: bookmarkAyath.ayah,
+                  textAlign: TextAlign.end,
+                  style: CustomFontStyle().common(
+                    color: AppColors.textBlack,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w500,
+                  )),
             ),
             Divider(height: 20),
             Html(
@@ -59,18 +67,34 @@ class BookmarkTile extends StatelessWidget {
               },
             ),
             Divider(height: 20),
-            ayathText(text: bookmarkAyath.translation1),
+            ayathText(
+                text: bookmarkAyath.translation1,
+                style: CustomFontStyle().common(
+                  color: AppColors.textBlack,
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w500,
+                )),
             Divider(height: 20),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '${bookmarkAyath.ayahNo}',
-                  style: CustomFontStyle().common(
-                    color: AppColors.textBlack.withOpacity(.25),
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Image.asset(
+                      ImageStrings.ayathCircle,
+                      height: 30.w,
+                      width: 30.w,
+                    ),
+                    Text(
+                      convertToArabic(bookmarkAyath.ayahNo),
+                      style: CustomFontStyle().common(
+                        color: AppColors.textBlack,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
                 ),
                 Spacer(),
                 buttonIcon(

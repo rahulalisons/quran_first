@@ -21,7 +21,6 @@ class ShareScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isSharing = context.watch<DbProvider>().isSharing;
-
     return Scaffold(
       body: Screenshot(
         controller: context.read<DbProvider>().screenshotController,
@@ -95,7 +94,7 @@ class ShareScreen extends StatelessWidget {
                                     fontWeight: FontWeight.w600,
                                     fontFamily: 'Manrope',
                                     color: AppColors.secondaryGreen,
-                                    fontSize: FontSize(15.sp),
+                                    fontSize: FontSize(16.sp),
                                     textAlign: TextAlign.start),
                               },
                             ),
@@ -108,8 +107,12 @@ class ShareScreen extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: ayathText(
-                                  text: ayath[
-                                          'malayalam_ayath_translator_1'] ??
+                                  style: CustomFontStyle().common(
+                                    color: AppColors.textBlack,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  text: ayath['malayalam_ayath_translator_1'] ??
                                       ayath['english_ayath_translator_1']),
                             ),
                           ],
@@ -125,7 +128,7 @@ class ShareScreen extends StatelessWidget {
                             bgColor: AppColors.shareBColor,
                             borderColor: AppColors.shareBColor,
                             text: 'Share',
-                            onPress: (){
+                            onPress: () {
                               context.read<DbProvider>().captureAndShare();
                             },
                           ),
